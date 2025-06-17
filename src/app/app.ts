@@ -1,12 +1,19 @@
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { HeaderComponent } from './components/header/header';
+import { Body } from './components/body/body';
+import { Footer } from './components/footer/footer';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
-  templateUrl: './app.html',
-  styleUrl: './app.css'
+  standalone: true,
+  imports: [HeaderComponent, Body, Footer],
+  template: `
+    <app-header></app-header>
+    <main style="padding: 20px;">
+      <p>Contenido del cuerpo de la aplicación</p>
+      <body>Esto es el cuerpo del la página Web</body>
+    </main>
+    <app-footer></app-footer>
+  `
 })
-export class App {
-  protected title = 'web-base';
-}
+export class AppComponent {}
