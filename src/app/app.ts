@@ -9,10 +9,15 @@ import { Footer } from './components/footer/footer';
   imports: [HeaderComponent, Body, Footer],
   template: `
     <app-header></app-header>
-    <main style="padding: 20px;">
+
+
+   <!-- <main style="padding: 20px;">
       <p>Contenido del cuerpo de la aplicación</p>
       <body>Esto es el cuerpo del la página Web</body>
-    </main>
+    </main> -->
+
+    
+    <app-body></app-body>
     <app-footer></app-footer>
   `
 })
