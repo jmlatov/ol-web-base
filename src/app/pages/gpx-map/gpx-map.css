@@ -6,6 +6,8 @@
 
 .ol-attribution {
   position: relative;
+  bottom: 10px;
+  left: 10px;
   background: rgba(255, 255, 255, 0.8);
   padding: 4px 8px;
   font-size: 10px;
@@ -13,9 +15,9 @@
   border-radius: 4px;
 }
 
-.ol-attribution button {
-  display: none; /* Hide the button */
-}
+/* .ol-attribution button {
+  display: none; 
+} */
 
 .ol-attribution-bottom-right {
   position: relative;
@@ -63,7 +65,7 @@
 .legend {
   position: absolute;
   bottom: 10px;
-  right: 10px;
+  left: 10px;
   z-index: 1000;
   width: 260px;
   font-size: 12px;

@@ -3,6 +3,7 @@ import OlMap from 'ol/Map';
 import View from 'ol/View';
 import TileLayer from 'ol/layer/Tile';
 import OSM from 'ol/source/OSM';
+import XYZ from 'ol/source/XYZ';
 import GPX from 'ol/format/GPX';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
@@ -34,6 +35,21 @@ export class GpxMap implements AfterViewInit {
   private map!: OlMap;
   private source = new VectorSource();
   private waypointData: Map<string, { name: string; desc?: string; image?: string; info?: string }> = new Map();
+
+  // Para tener dos capas de mapa: OSM y satélite
+  private osmLayer = new TileLayer({
+    source: new OSM(),
+    visible: true,
+  });
+
+  private satelliteLayer = new TileLayer({
+    source: new XYZ({
+      url: 'https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+      attributions: 'Tiles © Esri',
+    }),
+    visible: false,
+  });
+
 
   private vectorLayer = new VectorLayer({
     source: this.source,
@@ -81,7 +97,8 @@ export class GpxMap implements AfterViewInit {
 
     this.map = new OlMap({
       target: 'map',
-      layers: [new TileLayer({ source: new OSM() }), this.vectorLayer],
+      //layers: [new TileLayer({ source: new OSM() }), this.vectorLayer],
+      layers: [this.osmLayer, this.satelliteLayer, this.vectorLayer],
       overlays: [overlay],
       view: new View({
         center: fromLonLat([0, 0]),
@@ -239,4 +256,12 @@ export class GpxMap implements AfterViewInit {
     return `rgb(${r},${g},${b})`;
   }
 
+  onBaseLayerChange(event: Event): void {
+    const selected = (event.target as HTMLSelectElement).value;
+    this.osmLayer.setVisible(selected === 'osm');
+    this.satelliteLayer.setVisible(selected === 'satellite');
+  }
+
+
 }
+
