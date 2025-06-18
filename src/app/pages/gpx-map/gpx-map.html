@@ -1,0 +1,43 @@
+<div>
+  <h3>Selecciona Track</h3>
+  <select (change)="onTrackSelect($event)" class="track-selector">
+    @for (track of gpxTracks; track track.path) {
+    <option [value]="track.path">{{ track.name }}</option>
+    } @empty {
+    <option disabled>No tracks found</option>
+    }
+  </select>
+</div>
+
+<div id="map" class="map">
+
+  <div class="legend">
+    <h4>Pendiente del Track</h4>
+    <p>La pendiente se calcula como la diferencia de altitud entre el inicio y el final del tramo, expresada como un
+      porcentaje.</p>
+    <div class="legend-colors">
+      <span class="color-decrease"></span>
+      <span class="color-neutral"></span>
+      <span class="color-increase"></span>
+    </div>
+    <div class="legend-labels">
+      <span>Descenso</span>
+      <span>Plano</span>
+      <span>Ascenso</span>
+    </div>
+    <div class="legend-gradient"></div>
+    <div class="legend-labels">
+      <span>-20%</span>
+      <span>0%</span>
+      <span>+20%</span>
+    </div>
+
+    <div id="ol-attribution.bottom-right" class="ol-attribution.bottom-right"></div>
+
+  </div>
+</div>
+
+<div id="popup" class="ol-popup">
+  <a href="#" id="popup-closer" class="ol-popup-closer"></a>
+  <div id="popup-content"></div>
+</div>
