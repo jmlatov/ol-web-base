@@ -25,10 +25,10 @@ import Feature from 'ol/Feature';
 })
 export class GpxMap implements AfterViewInit {
   gpxTracks = [
-    { name: 'Track Zaragoza', path: '../../assets/track.gpx' },
-    { name: 'BTT Algars 2023', path: '../../assets/ii-btt-algars-fabara-2023.gpx' },
-    { name: 'BTT Algars 2025 - Corta', path: '../../assets/track2.gpx' },
-    { name: 'BTT Algars 2025 - Larga', path: '../../assets/track3.gpx' },
+    { name: 'Track Zaragoza', path: 'assets/track.gpx' },
+    { name: 'BTT Algars 2023', path: 'assets/ii-btt-algars-fabara-2023.gpx' },
+    { name: 'BTT Algars 2025 - Corta', path: 'assets/track2.gpx' },
+    { name: 'BTT Algars 2025 - Larga', path: 'assets/track3.gpx' },
   ];
 
   private map!: OlMap;
