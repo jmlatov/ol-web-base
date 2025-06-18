@@ -10,7 +10,7 @@ import Overlay from 'ol/Overlay';
 import { fromLonLat, toLonLat } from 'ol/proj';
 import { Stroke, Style, Icon } from 'ol/style';
 import Point from 'ol/geom/Point';
-import Attribution from 'ol/control/Attribution';
+import Attribution from 'ol/control/Attribution.js';
 import FullScreen from 'ol/control/FullScreen.js';
 import { defaults as defaultControls } from 'ol/control/defaults.js';
 import { getDistance } from 'ol/sphere';
@@ -87,13 +87,16 @@ export class GpxMap implements AfterViewInit {
         center: fromLonLat([0, 0]),
         zoom: 2,
       }),
-      controls: [
+      controls: defaultControls({ attribution: false }).extend([
         new Attribution({
+          //   collapsed: true,
           collapsible: false,  // No colapsable
-          target: 'ol-attribution.bottom-right'  // Usamos un contenedor personalizado
+          target: 'ol-attribution',
+          className: 'ol-attribution',  // Usamos un contenedor personalizado
+          //target: 'ol-attribution'
         }),
         new FullScreen({}),
-      ]
+      ]),
     });
 
     this.map.on('click', (evt) => {

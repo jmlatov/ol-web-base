@@ -4,7 +4,20 @@
   position: relative;
 }
 
-.ol-attribution.bottom-right {
+.ol-attribution {
+  position: relative;
+  background: rgba(255, 255, 255, 0.8);
+  padding: 4px 8px;
+  font-size: 10px;
+  z-index: 1000;
+  border-radius: 4px;
+}
+
+.ol-attribution button {
+  display: none; /* Hide the button */
+}
+
+.ol-attribution-bottom-right {
   position: relative;
   top: 10px;
   left: 10px;
@@ -56,7 +69,7 @@
   font-size: 12px;
   background: rgba(255, 255, 255, 0.85);
   border-radius: 8px;
-  padding: 8px;
+  padding: 4px;
   box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
 }
 
