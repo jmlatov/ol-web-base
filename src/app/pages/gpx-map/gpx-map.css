@@ -1,11 +1,11 @@
 .map {
   width: 100%;
-  height: 75vh;
+  height: 50vh;
   position: relative;
 }
 
 .ol-attribution.bottom-right {
-  position: absolute;
+  position: relative;
   top: 10px;
   left: 10px;
   background: rgba(255, 255, 255, 0.8);
@@ -56,12 +56,6 @@
   display: none;
   /* Hide the close button for hover popups */
 }
-
-
-
-
-
-
 
 .legend {
   position: absolute;
