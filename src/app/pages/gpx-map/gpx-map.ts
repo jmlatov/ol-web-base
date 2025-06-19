@@ -4,16 +4,13 @@ import View from 'ol/View';
 import TileLayer from 'ol/layer/Tile';
 import OSM from 'ol/source/OSM';
 import XYZ from 'ol/source/XYZ';
-import GPX from 'ol/format/GPX';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 import Overlay from 'ol/Overlay';
 import { fromLonLat, toLonLat } from 'ol/proj';
 import { Stroke, Style, Icon } from 'ol/style';
 import Point from 'ol/geom/Point';
-import Attribution from 'ol/control/Attribution.js';
-import FullScreen from 'ol/control/FullScreen.js';
-import { defaults as defaultControls } from 'ol/control/defaults.js';
+import { defaults as defaultControls, Attribution, FullScreen, Zoom } from 'ol/control';
 import { getDistance } from 'ol/sphere';
 import { LineString } from 'ol/geom';
 import Feature from 'ol/Feature';
@@ -104,17 +101,33 @@ export class GpxMap implements AfterViewInit {
         center: fromLonLat([0, 0]),
         zoom: 2,
       }),
-      controls: defaultControls({ attribution: false }).extend([
-        new Attribution({
-          //   collapsed: true,
-          collapsible: false,  // No colapsable
-          target: 'ol-attribution',
-          className: 'ol-attribution',  // Usamos un contenedor personalizado
-          //target: 'ol-attribution'
-        }),
-        new FullScreen({}),
-      ]),
+      controls: [],
     });
+
+    this.map.addControl(new Attribution({
+      collapsible: false,
+      target: 'legend-box',
+      className: 'ol-attribution-bottom-right'
+    }));
+    // Añado este código para eliminar el botón de "Attribution" que aparece por defecto
+    // Espera un poco para que se renderice el control y luego elimina el botón
+    setTimeout(() => {
+      const button = document.querySelector('.ol-attribution-bottom-right button');
+      if (button) {
+        button.remove(); // 💥 Elimina el botón manualmente
+      }
+    }, 1); // espera 1ms; ajusta si es necesario
+
+    this.map.addControl(new Zoom({
+      zoomInLabel: 'Acercar +',
+      zoomOutLabel: 'Alejar -'
+    }));
+
+    this.map.addControl(new FullScreen({
+      className: 'ol-full-screen-custom'
+    }));
+
+
 
     this.map.on('click', (evt) => {
       const feature = this.map.forEachFeatureAtPixel(evt.pixel, (feat) => {

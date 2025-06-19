@@ -1,5 +1,7 @@
-<div>
-  <h3>Selecciona Track</h3>
+<div class='track-selector-container'>
+  <p><label>
+  <strong>Selecciona Track: </strong>
+  
   <select (change)="onTrackSelect($event)" class="track-selector">
     @for (track of gpxTracks; track track.path) {
     <option [value]="track.path">{{ track.name }}</option>
@@ -7,14 +9,15 @@
     <option disabled>No tracks found</option>
     }
   </select>
-
+  </label>
+  
   <label>
-    <h3>Capa base:</h3>
-    <select (change)="onBaseLayerChange($event)">
+    <strong> Tipo de Mapa: </strong>
+    <select (change)="onBaseLayerChange($event)" class='track-selector'>
       <option value="osm">Mapa de calles (OSM)</option>
       <option value="satellite">Satélite (Esri)</option>
     </select>
-  </label>
+  </label></p>
 </div>
 
 
@@ -41,7 +44,7 @@
       <span>+20%</span>
     </div>
 
-    <!--  <div id="ol-attribution" class="ol-attribution-bottom-right"></div> -->
+    <div id="legend-box" class="ol-attribution-bottom-right"></div>
   
   </div>
 
