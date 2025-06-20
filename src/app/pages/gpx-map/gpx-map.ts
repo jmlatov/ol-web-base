@@ -448,6 +448,9 @@ export class GpxMap implements AfterViewInit {
       elevations.push(coords[i][2]); // elevación
     }
 
+
+
+    
     // const canvas = document.getElementById('elevation-chart') as HTMLCanvasElement;
     // this.resizeCanvasToDisplaySize(canvas);
 
