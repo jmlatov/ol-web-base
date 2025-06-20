@@ -23,7 +23,35 @@
 
 <div id="map" class="map">
 
-  <div class="legend">
+  <!-- Leyenda colapsable -->
+<div #legendRef class="ol-legend ol-unselectable ol-control">
+  <button class="legend-toggle" (click)="toggleLegend()" [attr.aria-expanded]="legendExpanded">
+    {{ legendExpanded ? '🔽 Leyenda' : '▶️ Leyenda' }}
+  </button>
+  <div class="legend-content" [class.collapsed]="!legendExpanded">
+    <h4>Pendiente del Track</h4>
+    <p>La pendiente se calcula como la diferencia de altitud entre el inicio y el final del tramo, expresada como un porcentaje.</p>
+    <div class="legend-colors">
+      <span class="color-decrease"></span>
+      <span class="color-neutral"></span>
+      <span class="color-increase"></span>
+    </div>
+    <div class="legend-labels">
+      <span>Descenso</span>
+      <span>Plano</span>
+      <span>Ascenso</span>
+    </div>
+    <div class="legend-gradient"></div>
+    <div class="legend-labels">
+      <span>-20%</span>
+      <span>0%</span>
+      <span>+20%</span>
+    </div>
+  </div>
+  
+  <div id="legend-box" class="ol-attribution-bottom-right"></div>
+
+  <!-- <div class="legend">
     <h4>Pendiente del Track</h4>
     <p>La pendiente se calcula como la diferencia de altitud entre el inicio y el final del tramo, expresada como un
       porcentaje.</p>
@@ -46,7 +74,7 @@
 
     <div id="legend-box" class="ol-attribution-bottom-right"></div>
   
-  </div>
+  </div> -->
 
 </div>
 

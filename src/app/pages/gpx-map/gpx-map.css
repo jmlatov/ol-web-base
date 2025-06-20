@@ -168,7 +168,7 @@
   bottom: 10px;
   right: 10px;
   z-index: 1500;
-  background-color: rgba(255, 255, 255, 0.95);
+  background-color: rgba(255, 255, 255, 0.5);
   border-radius: 8px;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
   font-size: 13px;
@@ -189,6 +189,7 @@
   text-align: left;
 }
 
+
 .legend-content.collapsed {
   display: none;
 }
@@ -197,11 +198,15 @@
   margin: 4px 0;
 }
 
+.legend-colors {
+  display: flex;
+  justify-content: space-between;
+}
+
 .legend-colors span {
   display: inline-block;
-  width: 99px;
+  width: 60px;
   height: 2px;
-  margin-right: 7px;
 }
 
 .color-decrease {

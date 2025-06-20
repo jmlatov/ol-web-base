@@ -1,4 +1,4 @@
-import { Component, AfterViewInit } from '@angular/core';
+import { Component, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
 import OlMap from 'ol/Map';
 import View from 'ol/View';
 import TileLayer from 'ol/layer/Tile';
@@ -10,7 +10,7 @@ import Overlay from 'ol/Overlay';
 import { fromLonLat, toLonLat } from 'ol/proj';
 import { Stroke, Style, Icon } from 'ol/style';
 import Point from 'ol/geom/Point';
-import { defaults as defaultControls, Attribution, FullScreen, Zoom } from 'ol/control';
+import { defaults as defaultControls, Attribution, FullScreen, Zoom, Control } from 'ol/control';
 import { getDistance } from 'ol/sphere';
 import { LineString } from 'ol/geom';
 import Feature from 'ol/Feature';
@@ -77,10 +77,20 @@ export class GpxMap implements AfterViewInit {
     },
   });
 
+  @ViewChild('legendRef') legendRef!: ElementRef<HTMLDivElement>;
+legendExpanded = true;
+
+toggleLegend(): void {
+  this.legendExpanded = !this.legendExpanded;
+}
+
+
   ngAfterViewInit(): void {
     const popupContainer = document.getElementById('popup')!;
     const popupContent = document.getElementById('popup-content')!;
     const popupCloser = document.getElementById('popup-closer')!;
+
+    const legendControl = new Control({ element: this.legendRef.nativeElement });
 
     const overlay = new Overlay({
       element: popupContainer,
@@ -127,6 +137,7 @@ export class GpxMap implements AfterViewInit {
       className: 'ol-full-screen-custom'
     }));
 
+    this.map.addControl(legendControl);
 
 
     this.map.on('click', (evt) => {
