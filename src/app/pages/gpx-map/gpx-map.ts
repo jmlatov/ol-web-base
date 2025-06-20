@@ -47,6 +47,23 @@ export class GpxMap implements AfterViewInit {
     visible: false,
   });
 
+  // Añadido para info adicional
+  info = {
+    elevation: '-',
+    slope: '-',
+    //totalDistance: '-',
+    travelled: '-',
+    remaining: '-'
+  };
+
+  private fullLineString: LineString | null = null;
+  private fullCoords: [number, number, number][] = [];
+  legendExpanded = true;
+
+  toggleLegend(): void {
+  this.legendExpanded = !this.legendExpanded;
+}
+
 
   private vectorLayer = new VectorLayer({
     source: this.source,
@@ -77,20 +94,10 @@ export class GpxMap implements AfterViewInit {
     },
   });
 
-  @ViewChild('legendRef') legendRef!: ElementRef<HTMLDivElement>;
-legendExpanded = true;
-
-toggleLegend(): void {
-  this.legendExpanded = !this.legendExpanded;
-}
-
-
   ngAfterViewInit(): void {
     const popupContainer = document.getElementById('popup')!;
     const popupContent = document.getElementById('popup-content')!;
     const popupCloser = document.getElementById('popup-closer')!;
-
-    const legendControl = new Control({ element: this.legendRef.nativeElement });
 
     const overlay = new Overlay({
       element: popupContainer,
@@ -137,7 +144,6 @@ toggleLegend(): void {
       className: 'ol-full-screen-custom'
     }));
 
-    this.map.addControl(legendControl);
 
 
     this.map.on('click', (evt) => {
@@ -171,6 +177,72 @@ toggleLegend(): void {
     });
 
     this.loadTrack(this.gpxTracks[0].path);
+
+this.map.on('pointermove', (evt) => {
+  if (!this.fullLineString || this.fullCoords.length < 2) return;
+
+  const coordinate = evt.coordinate;
+  const closest = this.fullLineString.getClosestPoint(coordinate);
+
+  // Encontrar el tramo más cercano
+  let iClosest = -1;
+  let minDist = Infinity;
+  for (let i = 1; i < this.fullCoords.length; i++) {
+    const [x1, y1] = this.fullCoords[i - 1];
+    const [x2, y2] = this.fullCoords[i];
+    const midX = (x1 + x2) / 2;
+    const midY = (y1 + y2) / 2;
+    const dist = Math.hypot(midX - closest[0], midY - closest[1]);
+    if (dist < minDist) {
+      minDist = dist;
+      iClosest = i;
+    }
+  }
+
+  if (iClosest > 0) {
+    const [x1, y1, z1] = this.fullCoords[iClosest - 1];
+    const [x2, y2, z2] = this.fullCoords[iClosest];
+
+    const lonLat1 = toLonLat([x1, y1]);
+    const lonLat2 = toLonLat([x2, y2]);
+
+    const elev = (z1 + z2) / 2;
+    const dist = getDistance(lonLat1, lonLat2);
+    const slope = dist > 0 ? ((z2 - z1) / dist) * 100 : 0;
+
+    this.info.elevation = elev.toFixed(0);
+    this.info.slope = slope.toFixed(1);
+
+    // Calcular distancia recorrida
+    let travelled = 0;
+const coords2D = this.fullCoords.map(([x, y]) => [x, y]);
+
+for (let i = 1; i < coords2D.length; i++) {
+  const c1 = coords2D[i - 1];
+  const c2 = coords2D[i];
+
+  // Si el punto actual está más allá del punto más cercano, nos detenemos
+  const line = new LineString([c1, c2]);
+  const segmentClosest = line.getClosestPoint(closest);
+  const isOnSegment = segmentClosest[0] === closest[0] && segmentClosest[1] === closest[1];
+
+  if (isOnSegment) {
+    travelled += getDistance(toLonLat(c1), toLonLat(closest));
+    break;
+  } else {
+    travelled += getDistance(toLonLat(c1), toLonLat(c2));
+  }
+}
+
+
+    const total = this.fullLineString.getLength();
+
+    this.info.travelled = (travelled / 1000).toFixed(2);
+    this.info.remaining = ((total - travelled) / 1000).toFixed(2);
+  }
+});
+
+
   }
 
   onTrackSelect(event: Event): void {
@@ -231,6 +303,14 @@ toggleLegend(): void {
             this.map.getView().fit(extent, { padding: [40, 40, 40, 40], duration: 800 });
           }
         }
+
+        this.fullCoords = coordinates;
+        this.fullLineString = new LineString(coordinates.map(([x, y]) => [x, y]));
+
+        //const totalDistance = this.fullLineString.getLength(); // en metros
+        //this.info.totalDistance = (totalDistance / 1000).toFixed(2);
+
+
       });
   }
 
