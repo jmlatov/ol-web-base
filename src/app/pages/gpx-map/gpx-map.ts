@@ -17,6 +17,8 @@ import Feature from 'ol/Feature';
 import Chart from 'chart.js/auto';
 import { drawElevationChart } from '../../utils/elevation-chart';
 
+
+
 @Component({
   selector: 'app-gpx-map',
   templateUrl: './gpx-map.html',
@@ -30,6 +32,9 @@ export class GpxMap implements AfterViewInit {
     { name: 'BTT Algars 2025 - Corta', path: 'assets/track2.gpx' },
     { name: 'BTT Algars 2025 - Larga', path: 'assets/track3.gpx' },
   ];
+
+  // Declaro @ViewChild para el canvas del gráfico
+  @ViewChild('elevationCanvas') elevationCanvasRef!: ElementRef<HTMLCanvasElement>;
 
   private map!: OlMap;
   private source = new VectorSource();
@@ -326,16 +331,45 @@ export class GpxMap implements AfterViewInit {
         this.source.addFeature(this.markerFeature); // Añadir marcador al mapa
 
         // Crear gráfico
-      //  this.drawElevationChart(coordinates);
-      const canvas = document.getElementById('elevation-chart') as HTMLCanvasElement;
+        //  this.drawElevationChart(coordinates);
+        //const canvas = document.getElementById('elevation-chart') as HTMLCanvasElement;
+        // 🕒 Esperar al siguiente ciclo del renderizado para asegurar que el canvas está en el DOM
 
-drawElevationChart(
-  canvas,
-  coordinates,
-  this.resizeCanvasToFixedHeight.bind(this), // 👉 función para redimensionar el canvas
-  this.markerFeature,                        // 👉 marcador a mover
-  { current: this.elevationChart }           // 👉 pasamos como objeto mutable
-);
+        // requestAnimationFrame(() => {
+        //   const canvas = document.getElementById('elevation-chart') as HTMLCanvasElement;
+
+        //   if (canvas) {
+        //     drawElevationChart(
+        //       canvas,
+        //       coordinates,
+        //       this.resizeCanvasToFixedHeight.bind(this),
+        //       this.markerFeature,
+        //       { current: this.elevationChart }
+        //     );
+        //   }
+        // });
+
+
+
+        //Usar la referencia de @ViewChild para el canvas
+        requestAnimationFrame(() => {
+          const canvas = this.elevationCanvasRef?.nativeElement;
+
+          if (canvas) {
+            const chartRef = { current: this.elevationChart };
+
+            drawElevationChart(
+              canvas,
+              coordinates,
+              this.resizeCanvasToFixedHeight.bind(this),
+              this.markerFeature,
+              chartRef
+            );
+
+            this.elevationChart = chartRef.current;
+          }
+        });
+
 
       });
   }
@@ -640,99 +674,99 @@ drawElevationChart(
   //********************************************************************
   // Gráfico sólo con curva de elevación e información de pendiente en el tooltipo
   //********************************************************************
-  private drawElevationChart(coords: [number, number, number][]) {
-    const labels: string[] = [];
-    const elevations: number[] = [];
-    const distances: number[] = [0];
-    const slopes: number[] = [0]; // solo para el tooltip
+  // private drawElevationChart(coords: [number, number, number][]) {
+  //   const labels: string[] = [];
+  //   const elevations: number[] = [];
+  //   const distances: number[] = [0];
+  //   const slopes: number[] = [0]; // solo para el tooltip
 
-    let totalDist = 0;
+  //   let totalDist = 0;
 
-    for (let i = 1; i < coords.length; i++) {
-      const lonLat1 = toLonLat([coords[i - 1][0], coords[i - 1][1]]);
-      const lonLat2 = toLonLat([coords[i][0], coords[i][1]]);
-      const segmentDist = getDistance(lonLat1, lonLat2);
-      totalDist += segmentDist;
-      distances.push(totalDist);
-    }
+  //   for (let i = 1; i < coords.length; i++) {
+  //     const lonLat1 = toLonLat([coords[i - 1][0], coords[i - 1][1]]);
+  //     const lonLat2 = toLonLat([coords[i][0], coords[i][1]]);
+  //     const segmentDist = getDistance(lonLat1, lonLat2);
+  //     totalDist += segmentDist;
+  //     distances.push(totalDist);
+  //   }
 
-    for (let i = 0; i < coords.length; i++) {
-      elevations.push(coords[i][2]);
-      labels.push((distances[i] / 1000).toFixed(2)); // en km
+  //   for (let i = 0; i < coords.length; i++) {
+  //     elevations.push(coords[i][2]);
+  //     labels.push((distances[i] / 1000).toFixed(2)); // en km
 
-      if (i > 0) {
-        const dz = coords[i][2] - coords[i - 1][2];
-        const dx = distances[i] - distances[i - 1];
-        const slope = dx > 0 ? (dz / dx) * 100 : 0;
-        slopes.push(Number(slope.toFixed(2)));
-      }
-    }
+  //     if (i > 0) {
+  //       const dz = coords[i][2] - coords[i - 1][2];
+  //       const dx = distances[i] - distances[i - 1];
+  //       const slope = dx > 0 ? (dz / dx) * 100 : 0;
+  //       slopes.push(Number(slope.toFixed(2)));
+  //     }
+  //   }
 
-    const canvas = document.getElementById('elevation-chart') as HTMLCanvasElement;
-    this.resizeCanvasToFixedHeight(canvas, 200);
+  //   const canvas = document.getElementById('elevation-chart') as HTMLCanvasElement;
+  //   this.resizeCanvasToFixedHeight(canvas, 200);
 
-    if (this.elevationChart) {
-      this.elevationChart.destroy();
-    }
+  //   if (this.elevationChart) {
+  //     this.elevationChart.destroy();
+  //   }
 
-    this.elevationChart = new Chart(canvas, {
-      type: 'line',
-      data: {
-        labels,
-        datasets: [
-          {
-            label: 'Elevación (m)',
-            data: elevations,
-            borderColor: '#4A90E2',
-            backgroundColor: 'rgba(74, 144, 226, 0.1)',
-            fill: true,
-            pointRadius: 0,
-            tension: 0.2,
-            yAxisID: 'y',
-          }
-        ]
-      },
-      options: {
-        responsive: false,
-        interaction: {
-          mode: 'index',
-          intersect: false,
-        },
-        plugins: {
-          tooltip: {
-            callbacks: {
-              label: (context) => {
-                const idx = context.dataIndex;
-                const elev = context.parsed.y;
-                const slope = slopes[idx] ?? 0;
-                return `Elevación: ${elev.toFixed(1)} m, Pendiente: ${slope.toFixed(1)}%`;
-              }
-            }
-          }
-        },
-        onHover: (event, elements) => {
-          const index = elements[0]?.index;
-          if (index !== undefined && coords[index]) {
-            const [x, y] = [coords[index][0], coords[index][1]];
-            this.markerFeature?.getGeometry()?.setCoordinates([x, y]);
-          }
-        },
-        scales: {
-          x: {
-            title: {
-              display: true,
-              text: 'Distancia (km)',
-            },
-          },
-          y: {
-            title: {
-              display: true,
-              text: 'Elevación (m)',
-            },
-          }
-        }
-      }
-    });
-  }
+  //   this.elevationChart = new Chart(canvas, {
+  //     type: 'line',
+  //     data: {
+  //       labels,
+  //       datasets: [
+  //         {
+  //           label: 'Elevación (m)',
+  //           data: elevations,
+  //           borderColor: '#4A90E2',
+  //           backgroundColor: 'rgba(74, 144, 226, 0.1)',
+  //           fill: true,
+  //           pointRadius: 0,
+  //           tension: 0.2,
+  //           yAxisID: 'y',
+  //         }
+  //       ]
+  //     },
+  //     options: {
+  //       responsive: false,
+  //       interaction: {
+  //         mode: 'index',
+  //         intersect: false,
+  //       },
+  //       plugins: {
+  //         tooltip: {
+  //           callbacks: {
+  //             label: (context) => {
+  //               const idx = context.dataIndex;
+  //               const elev = context.parsed.y;
+  //               const slope = slopes[idx] ?? 0;
+  //               return `Elevación: ${elev.toFixed(1)} m, Pendiente: ${slope.toFixed(1)}%`;
+  //             }
+  //           }
+  //         }
+  //       },
+  //       onHover: (event, elements) => {
+  //         const index = elements[0]?.index;
+  //         if (index !== undefined && coords[index]) {
+  //           const [x, y] = [coords[index][0], coords[index][1]];
+  //           this.markerFeature?.getGeometry()?.setCoordinates([x, y]);
+  //         }
+  //       },
+  //       scales: {
+  //         x: {
+  //           title: {
+  //             display: true,
+  //             text: 'Distancia (km)',
+  //           },
+  //         },
+  //         y: {
+  //           title: {
+  //             display: true,
+  //             text: 'Elevación (m)',
+  //           },
+  //         }
+  //       }
+  //     }
+  //   });
+  // }
 }
 
