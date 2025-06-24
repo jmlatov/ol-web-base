@@ -31,6 +31,9 @@ export class GpxMap implements AfterViewInit {
     { name: 'BTT Algars 2025 - Larga', path: 'assets/track3.gpx' },
   ];
 
+  private markerOverlay!: Overlay;
+  private markerInfoContent!: HTMLElement;
+
   // Declaro @ViewChild para el canvas del gráfico
   @ViewChild('elevationCanvas') elevationCanvasRef!: ElementRef<HTMLCanvasElement>;
 
@@ -167,6 +170,15 @@ export class GpxMap implements AfterViewInit {
       className: 'ol-full-screen-custom'
     }));
 
+    this.markerInfoContent = document.getElementById('marker-info-content')!;
+
+    this.markerOverlay = new Overlay({
+      element: document.getElementById('marker-info')!,
+      positioning: 'bottom-center',
+      stopEvent: false,
+      offset: [0, -15],
+    });
+    this.map.addOverlay(this.markerOverlay);
 
 
     this.map.on('click', (evt) => {
@@ -257,17 +269,39 @@ export class GpxMap implements AfterViewInit {
           }
         }
 
-if (this.elevationChart && iClosest !== this.lastChartIndex) {
-  updateChartHighlight(this.elevationChart, iClosest);
-  this.lastChartIndex = iClosest;
-}
+        if (this.elevationChart && iClosest !== this.lastChartIndex) {
+          updateChartHighlight(this.elevationChart, iClosest);
+          this.lastChartIndex = iClosest;
+        }
 
         const total = this.fullLineString.getLength();
 
         this.info.travelled = (travelled / 1000).toFixed(2);
         this.info.remaining = ((total - travelled) / 1000).toFixed(2);
+
+        this.updateMarkerInfoBox([closest[0], closest[1]], elev, slope, travelled / 1000, (total - travelled) / 1000);
+
       }
     });
+
+    const mapElement = document.getElementById('map');
+
+mapElement?.addEventListener('mouseleave', () => {
+  this.markerOverlay.setPosition(undefined);
+});
+
+mapElement?.addEventListener('mouseenter', () => {
+  // Si quieres que vuelva a aparecer al entrar, solo si hay coordenadas
+  if (this.markerFeature.getGeometry()) {
+    const coord = this.markerFeature.getGeometry()!.getCoordinates();
+    const elev = parseFloat(this.info.elevation);
+    const slope = parseFloat(this.info.slope);
+    const travelled = parseFloat(this.info.travelled);
+    const remaining = parseFloat(this.info.remaining);
+    this.updateMarkerInfoBox([coord[0], coord[1]], elev, slope, travelled, remaining);
+  }
+});
+
   }
 
   onTrackSelect(event: Event): void {
@@ -418,4 +452,16 @@ if (this.elevationChart && iClosest !== this.lastChartIndex) {
     canvas.width = displayWidth;
     canvas.height = displayHeight;
   }
+
+  private updateMarkerInfoBox(coord: [number, number], elev: number, slope: number, travelled: number, remaining: number) {
+    this.markerOverlay.setPosition(coord);
+    this.markerInfoContent.innerHTML = `
+    <strong>${elev.toFixed(0)} m</strong><br>
+    Pendiente: ${slope.toFixed(1)}%<br>
+    Recorrido: ${travelled.toFixed(2)} km<br>
+    Restante: ${remaining.toFixed(2)} km
+  `;
+  }
+
+
 }

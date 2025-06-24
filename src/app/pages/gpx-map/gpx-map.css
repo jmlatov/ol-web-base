@@ -265,3 +265,15 @@
   height: auto;
   display: block;
 }
+
+.marker-info-box {
+  background-color: white;
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 13px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+  position: absolute;
+  white-space: nowrap;
+  transform: translate(-50%, -120%);
+  pointer-events: none;
+}
