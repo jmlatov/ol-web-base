@@ -456,10 +456,10 @@ mapElement?.addEventListener('mouseenter', () => {
   private updateMarkerInfoBox(coord: [number, number], elev: number, slope: number, travelled: number, remaining: number) {
     this.markerOverlay.setPosition(coord);
     this.markerInfoContent.innerHTML = `
-    <strong>${elev.toFixed(0)} m</strong><br>
+    Altitud: <strong>${elev.toFixed(0)} m</strong><br>
     Pendiente: ${slope.toFixed(1)}%<br>
-    Recorrido: ${travelled.toFixed(2)} km<br>
-    Restante: ${remaining.toFixed(2)} km
+    <!-- Recorrido: ${travelled.toFixed(2)} km<br> -->
+    Restante: ${remaining.toFixed(2)} km 
   `;
   }
 
