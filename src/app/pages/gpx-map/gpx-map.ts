@@ -286,21 +286,21 @@ export class GpxMap implements AfterViewInit {
 
     const mapElement = document.getElementById('map');
 
-mapElement?.addEventListener('mouseleave', () => {
-  this.markerOverlay.setPosition(undefined);
-});
+    mapElement?.addEventListener('mouseleave', () => {
+      this.markerOverlay.setPosition(undefined);
+    });
 
-mapElement?.addEventListener('mouseenter', () => {
-  // Si quieres que vuelva a aparecer al entrar, solo si hay coordenadas
-  if (this.markerFeature.getGeometry()) {
-    const coord = this.markerFeature.getGeometry()!.getCoordinates();
-    const elev = parseFloat(this.info.elevation);
-    const slope = parseFloat(this.info.slope);
-    const travelled = parseFloat(this.info.travelled);
-    const remaining = parseFloat(this.info.remaining);
-    this.updateMarkerInfoBox([coord[0], coord[1]], elev, slope, travelled, remaining);
-  }
-});
+    mapElement?.addEventListener('mouseenter', () => {
+      // Si quieres que vuelva a aparecer al entrar, solo si hay coordenadas
+      if (this.markerFeature.getGeometry()) {
+        const coord = this.markerFeature.getGeometry()!.getCoordinates();
+        const elev = parseFloat(this.info.elevation);
+        const slope = parseFloat(this.info.slope);
+        const travelled = parseFloat(this.info.travelled);
+        const remaining = parseFloat(this.info.remaining);
+        this.updateMarkerInfoBox([coord[0], coord[1]], elev, slope, travelled, remaining);
+      }
+    });
 
   }
 
