@@ -97,8 +97,8 @@ export class GpxMap implements AfterViewInit {
         return new Style({
           image: new Icon({
             src: 'assets/icons/bike.svg', // usa tu icono de marcador
-            scale: 0.07,
-            anchor: [0.5, 1],
+            scale: 0.5,
+            anchor: [0.5, 0.5],
           }),
         });
       }
