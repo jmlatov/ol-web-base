@@ -92,6 +92,17 @@ export class GpxMap implements AfterViewInit {
           stroke: new Stroke({ color, width: 5 }),
         });
       }
+
+            if (feature === this.markerFeature) {
+        return new Style({
+          image: new Icon({
+            src: 'assets/icons/bike.svg', // usa tu icono de marcador
+            scale: 0.07,
+            anchor: [0.5, 1],
+          }),
+        });
+      }
+
       if (type === 'Point') {
         return new Style({
           image: new Icon({
@@ -101,15 +112,7 @@ export class GpxMap implements AfterViewInit {
           }),
         });
       }
-      if (feature === this.markerFeature) {
-        return new Style({
-          image: new Icon({
-            src: 'assets/icons/marker.png', // usa tu icono de marcador
-            scale: 0.07,
-            anchor: [0.5, 1],
-          }),
-        });
-      }
+
       return undefined;
     },
   });
