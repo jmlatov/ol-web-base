@@ -11,6 +11,8 @@ export function drawElevationChart(
   markerFeature: Feature<Point>,
   chartRef: { current: Chart | null }
 ): void {
+  resizeCanvas(canvas, 200);
+
   const labels: string[] = [];
   const elevations: number[] = [];
   const distances: number[] = [0];
@@ -38,7 +40,7 @@ export function drawElevationChart(
     }
   }
 
-  resizeCanvas(canvas, 200);
+  //resizeCanvas(canvas, 200);
 
   if (chartRef.current) {
     chartRef.current.destroy();
@@ -84,6 +86,16 @@ export function drawElevationChart(
           markerFeature?.getGeometry()?.setCoordinates([x, y]);
         }
       },
+
+      // onHover: (event, elements) => {
+      //   const index = elements[0]?.index;
+      //   if (index !== undefined) {
+      //     if (typeof window !== 'undefined') {
+      //       (window as any).__updateMarkerFromChart?.(index);
+      //     }
+      //   }
+      // },
+
       scales: {
         x: {
           title: {
@@ -100,4 +112,28 @@ export function drawElevationChart(
       }
     }
   });
+
+}
+
+export function updateChartHighlight(chart: Chart, index: number): void {
+  if (!chart) return;
+
+  chart.setActiveElements([
+    {
+      datasetIndex: 0,
+      index: index,
+    },
+  ]);
+  if (chart.tooltip && typeof chart.tooltip.setActiveElements === 'function') {
+    chart.tooltip.setActiveElements(
+      [
+        {
+          datasetIndex: 0,
+          index: index,
+        },
+      ],
+      { x: 0, y: 0 }
+    );
+  }
+  chart.update();
 }
