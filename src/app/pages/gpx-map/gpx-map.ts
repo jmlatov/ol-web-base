@@ -443,7 +443,8 @@ export class GpxMap implements AfterViewInit {
   }
 
   private resizeCanvasToFixedHeight(canvas: HTMLCanvasElement, heightPx: number): void {
-    const pixelRatio = window.devicePixelRatio || 1;
+    //const pixelRatio = window.devicePixelRatio || 1;
+    const pixelRatio = 1; // Forzar a 1 para evitar problemas de escalado en algunos navegadores
     const width = canvas.clientWidth;
     const displayWidth = Math.floor(width * pixelRatio);
     const displayHeight = Math.floor(heightPx * pixelRatio);

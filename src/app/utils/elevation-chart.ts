@@ -40,8 +40,6 @@ export function drawElevationChart(
     }
   }
 
-  //resizeCanvas(canvas, 200);
-
   if (chartRef.current) {
     chartRef.current.destroy();
   }
@@ -87,15 +85,6 @@ export function drawElevationChart(
         }
       },
 
-      // onHover: (event, elements) => {
-      //   const index = elements[0]?.index;
-      //   if (index !== undefined) {
-      //     if (typeof window !== 'undefined') {
-      //       (window as any).__updateMarkerFromChart?.(index);
-      //     }
-      //   }
-      // },
-
       scales: {
         x: {
           title: {
@@ -112,7 +101,6 @@ export function drawElevationChart(
       }
     }
   });
-
 }
 
 export function updateChartHighlight(chart: Chart, index: number): void {
