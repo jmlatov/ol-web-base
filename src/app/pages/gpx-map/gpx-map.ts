@@ -366,7 +366,6 @@ export class GpxMap implements AfterViewInit, OnInit {
     // Diganósticando el código para ver si se está llamando correctamente
     //console.log('Cargando track desde:', path);
 
-
     this.source.clear();
     this.waypointData.clear();
 
