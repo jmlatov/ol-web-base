@@ -467,13 +467,13 @@ export class GpxMap implements AfterViewInit, OnInit {
   // }
 
 
-  
+
   togglePlayback(): void {
-  if (this.gpxPlayer) {
-    this.gpxPlayer.toggle();
-    this.isPlaying = this.gpxPlayer.isPlaying;
+    if (this.gpxPlayer) {
+      this.gpxPlayer.toggle();
+      this.isPlaying = this.gpxPlayer.isPlaying;
+    }
   }
-}
 
 
 
@@ -549,6 +549,14 @@ export class GpxMap implements AfterViewInit, OnInit {
     <!-- Recorrido: ${travelled.toFixed(2)} km<br> -->
     Restante: ${remaining.toFixed(2)} km 
   `;
+  }
+
+  resetPlayback(): void {
+    this.gpxPlayer?.reset();
+  }
+
+  setPlaybackSpeed(multiplier: number): void {
+    this.gpxPlayer?.setSpeed(multiplier);
   }
 
 

@@ -29,6 +29,10 @@
   <button (click)="togglePlayback()">
     {{ isPlaying ? '⏸️ Pausar' : '▶️ Reproducir' }}
   </button>
+
+  <button (click)="setPlaybackSpeed(10)" title="Velocidad 10x">⏩ Avance 10x</button>
+
+  <button (click)="resetPlayback()" title="Reiniciar">🔁 Reiniciar</button>
 </div>
 
 
