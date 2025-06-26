@@ -277,3 +277,19 @@
   transform: translate(-50%, -120%);
   pointer-events: none;
 }
+
+.playback-controls {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 999;
+}
+
+.playback-controls button {
+  background: white;
+  border: 1px solid #aaa;
+  padding: 6px 12px;
+  border-radius: 5px;
+  font-size: 16px;
+}
+

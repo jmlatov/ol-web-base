@@ -25,6 +25,12 @@
 <div class="map-wrapper">
   <div id="map" class="map">
 
+<div class="playback-controls">
+  <button (click)="togglePlayback()">
+    {{ isPlaying ? '⏸️ Pausar' : '▶️ Reproducir' }}
+  </button>
+</div>
+
 
     <!-- Leyenda colapsable -->
     <div #legendRef class="ol-legend ol-unselectable ol-control">
@@ -54,6 +60,7 @@
       </div>
 
       <div id="legend-box" class="ol-attribution-bottom-right"></div>
+
 
 
 

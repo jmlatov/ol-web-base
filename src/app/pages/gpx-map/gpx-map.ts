@@ -18,6 +18,7 @@ import { LineString } from 'ol/geom';
 import Feature from 'ol/Feature';
 import Chart from 'chart.js/auto';
 import { drawElevationChart, updateChartHighlight } from '../../utils/elevation-chart';
+import { GpxPlayer } from '../../utils/gpx-play';
 import { from } from 'rxjs';
 
 @Component({
@@ -32,6 +33,9 @@ import { from } from 'rxjs';
 
 
 export class GpxMap implements AfterViewInit, OnInit {
+
+  private gpxPlayer: GpxPlayer | null = null;
+
 
   private http = inject(HttpClient);
 
@@ -325,7 +329,7 @@ export class GpxMap implements AfterViewInit, OnInit {
 
         this.info.travelled = (travelled / 1000).toFixed(2);
         this.info.remaining = ((total - travelled) / 1000).toFixed(2);
-        
+
         // Diagnósticando de nuevo si carga la información correctamente
         //console.log('Información del marcador:', this.info);
 
@@ -439,12 +443,41 @@ export class GpxMap implements AfterViewInit, OnInit {
             );
 
             this.elevationChart = chartRef.current;
+
+            this.gpxPlayer = new GpxPlayer(
+              this.fullCoords,
+              this.markerFeature,
+              (info) => { this.info = info; },
+              this.updateMarkerInfoBox.bind(this),
+              this.elevationChart ?? undefined
+            );
+
           }
         });
 
 
       });
   }
+
+  // togglePlayback(): void {
+  //   if (this.gpxPlayer) {
+  //     this.gpxPlayer.toggle();
+  //   }
+  // }
+
+get isPlaying(): boolean {
+  return this.gpxPlayer?.isPlaying ?? false;
+}
+
+
+  togglePlayback(): void {
+  if (this.gpxPlayer) {
+    this.gpxPlayer.toggle();
+    this.isPlaying = this.gpxPlayer.isPlaying;
+  }
+}
+
+
 
   private assignSlopeColors(coords: [number, number, number][]): void {
     for (let i = 1; i < coords.length; i++) {
