@@ -1,4 +1,6 @@
-import { Component, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, AfterViewInit, ViewChild, ElementRef, OnInit, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
 import OlMap from 'ol/Map';
 import View from 'ol/View';
 import TileLayer from 'ol/layer/Tile';
@@ -16,20 +18,64 @@ import { LineString } from 'ol/geom';
 import Feature from 'ol/Feature';
 import Chart from 'chart.js/auto';
 import { drawElevationChart, updateChartHighlight } from '../../utils/elevation-chart';
+import { from } from 'rxjs';
 
 @Component({
   selector: 'app-gpx-map',
   templateUrl: './gpx-map.html',
   styleUrls: ['./gpx-map.css'],
   standalone: true,
+  imports: [
+    CommonModule,
+    HttpClientModule],
 })
-export class GpxMap implements AfterViewInit {
-  gpxTracks = [
-    { name: 'Track Zaragoza', path: 'assets/track.gpx' },
-    { name: 'BTT Algars 2023', path: 'assets/ii-btt-algars-fabara-2023.gpx' },
-    { name: 'BTT Algars 2025 - Corta', path: 'assets/track2.gpx' },
-    { name: 'BTT Algars 2025 - Larga', path: 'assets/track3.gpx' },
-  ];
+
+
+export class GpxMap implements AfterViewInit, OnInit {
+
+  private http = inject(HttpClient);
+
+  // gpxTracks = [
+  //   { name: 'Track Zaragoza', path: 'assets/track.gpx' },
+  //   { name: 'BTT Algars 2023', path: 'assets/ii-btt-algars-fabara-2023.gpx' },
+  //   { name: 'BTT Algars 2025 - Corta', path: 'assets/track2.gpx' },
+  //   { name: 'BTT Algars 2025 - Larga', path: 'assets/track3.gpx' },
+  // ];
+
+  gpxTracks: { name: string; path: string }[] = [];
+
+  private mapReady = false;
+
+  ngOnInit(): void {
+    this.loadTrackList();
+  }
+
+  private initialTrackPath: string | null = null;
+
+  private loadTrackList(): void {
+    this.http.get<{ name: string; path: string }[]>('assets/tracks.json').subscribe({
+      next: (tracks) => {
+        this.gpxTracks = tracks;
+        if (tracks.length > 0) {
+          this.initialTrackPath = tracks[0].path;
+          this.tryLoadInitialTrack();
+        }
+      },
+      error: (err) => {
+        console.error('Error cargando tracks.json:', err);
+      }
+    });
+  }
+
+  private tryLoadInitialTrack(): void {
+    if (this.mapReady && this.initialTrackPath) {
+      this.loadTrack(this.initialTrackPath);
+      this.initialTrackPath = null; // ya no hace falta
+    }
+  }
+
+
+
 
   private markerOverlay!: Overlay;
   private markerInfoContent!: HTMLElement;
@@ -211,7 +257,8 @@ export class GpxMap implements AfterViewInit {
       }
     });
 
-    this.loadTrack(this.gpxTracks[0].path);
+    // Elmino esta linea porque la carga se hace desde el JSON DINÁMICAMENTE
+    //this.loadTrack(this.gpxTracks[0].path);
 
     this.map.on('pointermove', (evt) => {
       if (!this.fullLineString || this.fullCoords.length < 2) return;
@@ -278,6 +325,9 @@ export class GpxMap implements AfterViewInit {
 
         this.info.travelled = (travelled / 1000).toFixed(2);
         this.info.remaining = ((total - travelled) / 1000).toFixed(2);
+        
+        // Diagnósticando de nuevo si carga la información correctamente
+        //console.log('Información del marcador:', this.info);
 
         this.updateMarkerInfoBox([closest[0], closest[1]], elev, slope, travelled / 1000, (total - travelled) / 1000);
 
@@ -302,6 +352,9 @@ export class GpxMap implements AfterViewInit {
       }
     });
 
+    this.mapReady = true;
+    this.tryLoadInitialTrack();
+
   }
 
   onTrackSelect(event: Event): void {
@@ -310,6 +363,10 @@ export class GpxMap implements AfterViewInit {
   }
 
   private loadTrack(path: string): void {
+    // Diganósticando el código para ver si se está llamando correctamente
+    //console.log('Cargando track desde:', path);
+
+
     this.source.clear();
     this.waypointData.clear();
 
