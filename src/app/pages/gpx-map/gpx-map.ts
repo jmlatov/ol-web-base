@@ -34,6 +34,7 @@ import { from } from 'rxjs';
 
 export class GpxMap implements AfterViewInit, OnInit {
 
+  isPlaying: boolean = false;
   private gpxPlayer: GpxPlayer | null = null;
 
 
@@ -465,11 +466,8 @@ export class GpxMap implements AfterViewInit, OnInit {
   //   }
   // }
 
-get isPlaying(): boolean {
-  return this.gpxPlayer?.isPlaying ?? false;
-}
 
-
+  
   togglePlayback(): void {
   if (this.gpxPlayer) {
     this.gpxPlayer.toggle();
