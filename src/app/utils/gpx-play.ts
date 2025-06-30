@@ -142,18 +142,28 @@ export class GpxPlayer {
     //     }
     // }
 
+    // setSpeed(multiplier: number): void {
+    //     // Define el número de pasos que avanza por cada tick
+    //     this.stepSize = Math.floor(multiplier);
+
+    //     // Intervalo por tick (reduce velocidad cuanto más grande el step)
+    //     this.intervalMs = 100;
+
+    //     if (this.isPlaying) {
+    //         this.stop();
+    //         this.start();
+    //     }
+    // }
     setSpeed(multiplier: number): void {
-        // Define el número de pasos que avanza por cada tick
-        this.stepSize = Math.floor(multiplier);
+  this.stepSize = Math.floor(multiplier);
+  this.intervalMs = 100;
 
-        // Intervalo por tick (reduce velocidad cuanto más grande el step)
-        this.intervalMs = 100;
+  if (this.isPlaying) {
+    this.stop();
+    this.start(); // reinicia con nueva velocidad
+  }
+}
 
-        if (this.isPlaying) {
-            this.stop();
-            this.start();
-        }
-    }
 
 
     // reset(): void {

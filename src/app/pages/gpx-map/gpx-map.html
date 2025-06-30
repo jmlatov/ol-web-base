@@ -25,7 +25,7 @@
 <div class="map-wrapper">
   <div id="map" class="map">
 
-<div class="playback-controls">
+    <!-- <div class="playback-controls">
   <button (click)="togglePlayback()">
     {{ isPlaying ? '⏸️ Pausar' : '▶️ Reproducir' }}
   </button>
@@ -33,7 +33,23 @@
   <button (click)="setPlaybackSpeed(10)" title="Velocidad 10x">⏩ Avance 10x</button>
 
   <button (click)="resetPlayback()" title="Reiniciar">🔁 Reiniciar</button>
-</div>
+</div> -->
+
+    <div class="playback-controls">
+      <button (click)="togglePlayback()" [title]="isPlaying ? 'Pausar' : 'Reproducir'">
+        {{ isPlaying ? '⏸️ Pausa' : '▶️ Play' }}
+      </button>
+
+      <select (change)="onSpeedChange($event)" [value]="playbackSpeed">
+        <option [value]="1">Velocidad x1</option>
+        <option [value]="5">Velocidad x5</option>
+        <option [value]="10">Velocidad x10</option>
+        <option [value]="20">Velocidad x20</option>
+      </select>
+
+      <button (click)="resetPlayback()" title="Reiniciar">🔁 Reiniciar</button>
+    </div>
+
 
 
     <!-- Leyenda colapsable -->
@@ -92,10 +108,12 @@
     </div>
 
 
+
+
   </div>
 
-  <!-- 👇 Gráfico de perfil de elevación debajo del mapa -->
-  <div class="elevation-container">
-    <canvas #elevationCanvas id="elevation-chart"></canvas>
-  </div>
+      <!-- 👇 Gráfico de perfil de elevación debajo del mapa -->
+    <div class="elevation-container">
+      <canvas #elevationCanvas id="elevation-chart"></canvas>
+    </div>
 </div>
