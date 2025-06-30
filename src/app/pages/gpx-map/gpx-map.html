@@ -41,12 +41,11 @@
       </button>
 
       <select (change)="onSpeedChange($event)" [value]="playbackSpeed">
-        <option [value]="1">Velocidad x1</option>
-        <option [value]="5">Velocidad x5</option>
-        <option [value]="10">Velocidad x10</option>
-        <option [value]="20">Velocidad x20</option>
+        <option [value]="1" [selected]="playbackSpeed === 1">Velocidad x1</option>
+        <option [value]="5" [selected]="playbackSpeed === 5">Velocidad x5</option>
+        <option [value]="10" [selected]="playbackSpeed === 10">Velocidad x10</option>
+        <option [value]="20" [selected]="playbackSpeed === 20">Velocidad x20</option>
       </select>
-
       <button (click)="resetPlayback()" title="Reiniciar">🔁 Reiniciar</button>
     </div>
 

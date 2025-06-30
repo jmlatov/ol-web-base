@@ -559,7 +559,7 @@ export class GpxMap implements AfterViewInit, OnInit {
     this.gpxPlayer?.setSpeed(multiplier);
   }
 
-  playbackSpeed = 1;
+  playbackSpeed = 10;
 
   onSpeedChange(event: Event): void {
     const select = event.target as HTMLSelectElement;
