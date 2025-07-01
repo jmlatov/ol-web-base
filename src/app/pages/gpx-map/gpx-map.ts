@@ -80,9 +80,6 @@ export class GpxMap implements AfterViewInit, OnInit {
     }
   }
 
-
-
-
   private markerOverlay!: Overlay;
   private markerInfoContent!: HTMLElement;
 
@@ -393,7 +390,7 @@ export class GpxMap implements AfterViewInit, OnInit {
           const image = wpt.getElementsByTagNameNS('*', 'image')[0]?.textContent ?? '';
           const info = wpt.getElementsByTagNameNS('*', 'info')[0]?.textContent ?? '';
 
-          this.waypointData.set(key, { name, desc, image, info, type });
+          this.waypointData.set(key, { name, type, desc, image, info });
           console.log(`Waypoint: ${name} (${lat}, ${lon}) - Type: ${type}`);
 
           // ➕ Añadir como Feature de tipo Point
