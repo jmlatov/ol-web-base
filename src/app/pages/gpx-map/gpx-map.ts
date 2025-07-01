@@ -1,6 +1,7 @@
 import { Component, AfterViewInit, ViewChild, ElementRef, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+//import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import OlMap from 'ol/Map';
 import View from 'ol/View';
 import TileLayer from 'ol/layer/Tile';
@@ -29,7 +30,7 @@ import FeatureFormat from 'ol/format/Feature';
   standalone: true,
   imports: [
     CommonModule,
-    HttpClientModule],
+    ],
 })
 
 

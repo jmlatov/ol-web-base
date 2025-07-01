@@ -6,6 +6,7 @@ import { Acerca } from './app/pages/acerca/acerca';
 import { Contacto } from './app/pages/contacto/contacto';
 import { provideRouter, Routes } from '@angular/router';
 import { GpxMap } from './app/pages/gpx-map/gpx-map';
+import { provideHttpClient } from '@angular/common/http';
 
 const routes: Routes = [
   { path: '', component: Body },
@@ -15,5 +16,8 @@ const routes: Routes = [
 ];
 
 bootstrapApplication(AppComponent, {
-  providers: [provideRouter(routes)]
+  providers: [
+    provideRouter(routes),
+    provideHttpClient(),
+  ]
 }).catch(err => console.error(err));
