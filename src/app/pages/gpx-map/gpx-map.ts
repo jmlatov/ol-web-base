@@ -166,7 +166,7 @@ export class GpxMap implements AfterViewInit, OnInit {
 
       if (type === 'Point') {
         const featureType = feature.get('type'); // <<==== este es el tipo que cargaste del GPX
-        let iconPath = 'assets/icons/default.png'; // por defecto
+        let iconPath = 'assets/icons/default.svg'; // por defecto
 
 
         if (featureType === 'monument') {
