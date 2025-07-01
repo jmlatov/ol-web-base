@@ -154,10 +154,32 @@ export class GpxMap implements AfterViewInit, OnInit {
         });
       }
 
+      // if (type === 'Point') {
+      //   return new Style({
+      //     image: new Icon({
+      //       src: 'assets/icons/10160509.png',
+      //       scale: 0.15,
+      //       anchor: [1, 1],
+      //     }),
+      //   });
+      // }
+
       if (type === 'Point') {
+        const featureType = feature.get('type'); // <<==== este es el tipo que cargaste del GPX
+        let iconPath = 'assets/icons/10160509.png'; // por defecto
+
+
+        if (featureType === 'monument') {
+          iconPath = 'assets/icons/monument.svg';
+        } else if (featureType === 'water') {
+          iconPath = 'assets/icons/water.svg';
+        } else if (featureType === 'viewpoint') {
+          iconPath = 'assets/icons/camera.svg';
+        }
+
         return new Style({
           image: new Icon({
-            src: 'assets/icons/10160509.png',
+            src: iconPath,
             scale: 0.15,
             anchor: [1, 1],
           }),
