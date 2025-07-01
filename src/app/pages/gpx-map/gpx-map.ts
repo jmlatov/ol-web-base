@@ -94,7 +94,7 @@ export class GpxMap implements AfterViewInit, OnInit {
 
   private map!: OlMap;
   private source = new VectorSource();
-  private waypointData: Map<string, { name: string; desc?: string; image?: string; info?: string }> = new Map();
+  private waypointData: Map<string, { name: string; desc?: string; image?: string; info?: string; type?: string }> = new Map();
 
   //private elevationChart!: Chart;
 
@@ -393,7 +393,7 @@ export class GpxMap implements AfterViewInit, OnInit {
           const image = wpt.getElementsByTagNameNS('*', 'image')[0]?.textContent ?? '';
           const info = wpt.getElementsByTagNameNS('*', 'info')[0]?.textContent ?? '';
 
-          this.waypointData.set(key, { name, desc, image, info });
+          this.waypointData.set(key, { name, desc, image, info, type });
 
           // ➕ Añadir como Feature de tipo Point
           const coords = fromLonLat([lon, lat]);
