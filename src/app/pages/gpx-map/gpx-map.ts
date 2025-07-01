@@ -166,7 +166,7 @@ export class GpxMap implements AfterViewInit, OnInit {
 
       if (type === 'Point') {
         const featureType = feature.get('type'); // <<==== este es el tipo que cargaste del GPX
-        let iconPath = 'assets/icons/10160509.png'; // por defecto
+        let iconPath = 'assets/icons/start.svg'; // por defecto
 
 
         if (featureType === 'monument') {
@@ -180,8 +180,8 @@ export class GpxMap implements AfterViewInit, OnInit {
         return new Style({
           image: new Icon({
             src: iconPath,
-            scale: 0.15,
-            anchor: [1, 1],
+            scale: 0.5,
+            anchor: [0.5, 0.5],
           }),
         });
       }
@@ -422,7 +422,7 @@ export class GpxMap implements AfterViewInit, OnInit {
           feature.set('name', name); // por si lo necesitas después
           feature.set('type', type);
           this.source.addFeature(feature);
-          console.log(feature);
+          //console.log(feature);
         }
 
         // 📈 Extraer puntos del track

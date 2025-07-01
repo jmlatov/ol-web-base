@@ -20608,7 +20608,8 @@
   </trkseg>
  </trk>
  <wpt lat="41.155978" lon="0.207926">
-    <name>Roquizal del Rullo</name>
+    <name>Roquizal de El Rullo</name>
+    <type>monument</type>
     <desc>Poblado Íbero cerca del río Algars (Fabara)</desc>
     <extensions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
        <xsi:image>assets/images/ceramicas-rullo.jpg</xsi:image>
