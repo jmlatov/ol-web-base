@@ -394,6 +394,7 @@ export class GpxMap implements AfterViewInit, OnInit {
           const info = wpt.getElementsByTagNameNS('*', 'info')[0]?.textContent ?? '';
 
           this.waypointData.set(key, { name, desc, image, info, type });
+          console.log(`Waypoint: ${name} (${lat}, ${lon}) - Type: ${type}`);
 
           // ➕ Añadir como Feature de tipo Point
           const coords = fromLonLat([lon, lat]);
