@@ -20,6 +20,7 @@ import Chart from 'chart.js/auto';
 import { drawElevationChart, updateChartHighlight } from '../../utils/elevation-chart';
 import { GpxPlayer } from '../../utils/gpx-play';
 import { from } from 'rxjs';
+import FeatureFormat from 'ol/format/Feature';
 
 @Component({
   selector: 'app-gpx-map',
@@ -387,6 +388,7 @@ export class GpxMap implements AfterViewInit, OnInit {
           const lon = parseFloat(wpt.getAttribute('lon')!);
           const key = `${lat.toFixed(6)},${lon.toFixed(6)}`;
           const name = wpt.getElementsByTagName('name')[0]?.textContent ?? '';
+          const type = wpt.getElementsByTagName('type')[0]?.textContent ?? '';
           const desc = wpt.getElementsByTagName('desc')[0]?.textContent ?? '';
           const image = wpt.getElementsByTagNameNS('*', 'image')[0]?.textContent ?? '';
           const info = wpt.getElementsByTagNameNS('*', 'info')[0]?.textContent ?? '';
@@ -398,7 +400,9 @@ export class GpxMap implements AfterViewInit, OnInit {
           const point = new Point(coords);
           const feature = new Feature(point);
           feature.set('name', name); // por si lo necesitas después
+          feature.set('type', type);
           this.source.addFeature(feature);
+          console.log(feature);
         }
 
         // 📈 Extraer puntos del track
@@ -559,7 +563,7 @@ export class GpxMap implements AfterViewInit, OnInit {
     this.gpxPlayer?.setSpeed(multiplier);
   }
 
-  playbackSpeed = 10;
+  playbackSpeed = 1; // Velocidad de reproducción por defecto
 
   onSpeedChange(event: Event): void {
     const select = event.target as HTMLSelectElement;
