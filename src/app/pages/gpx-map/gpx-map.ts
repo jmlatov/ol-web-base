@@ -1,6 +1,5 @@
 import { Component, AfterViewInit, ViewChild, ElementRef, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-//import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { HttpClient } from '@angular/common/http';
 import OlMap from 'ol/Map';
 import View from 'ol/View';
@@ -33,21 +32,12 @@ import FeatureFormat from 'ol/format/Feature';
     ],
 })
 
-
 export class GpxMap implements AfterViewInit, OnInit {
 
   isPlaying: boolean = false;
   private gpxPlayer: GpxPlayer | null = null;
 
-
   private http = inject(HttpClient);
-
-  // gpxTracks = [
-  //   { name: 'Track Zaragoza', path: 'assets/track.gpx' },
-  //   { name: 'BTT Algars 2023', path: 'assets/ii-btt-algars-fabara-2023.gpx' },
-  //   { name: 'BTT Algars 2025 - Corta', path: 'assets/track2.gpx' },
-  //   { name: 'BTT Algars 2025 - Larga', path: 'assets/track3.gpx' },
-  // ];
 
   gpxTracks: { name: string; path: string }[] = [];
 
@@ -154,16 +144,6 @@ export class GpxMap implements AfterViewInit, OnInit {
           }),
         });
       }
-
-      // if (type === 'Point') {
-      //   return new Style({
-      //     image: new Icon({
-      //       src: 'assets/icons/10160509.png',
-      //       scale: 0.15,
-      //       anchor: [1, 1],
-      //     }),
-      //   });
-      // }
 
       if (type === 'Point') {
         const featureType = feature.get('type'); // <<==== este es el tipo que cargaste del GPX
@@ -283,9 +263,6 @@ export class GpxMap implements AfterViewInit, OnInit {
       }
     });
 
-    // Elmino esta linea porque la carga se hace desde el JSON DINÁMICAMENTE
-    //this.loadTrack(this.gpxTracks[0].path);
-
     this.map.on('pointermove', (evt) => {
       if (!this.fullLineString || this.fullCoords.length < 2) return;
 
@@ -351,7 +328,6 @@ export class GpxMap implements AfterViewInit, OnInit {
 
         this.info.travelled = (travelled / 1000).toFixed(2);
         this.info.remaining = ((total - travelled) / 1000).toFixed(2);
-
         // Diagnósticando de nuevo si carga la información correctamente
         //console.log('Información del marcador:', this.info);
 
@@ -485,22 +461,12 @@ export class GpxMap implements AfterViewInit, OnInit {
       });
   }
 
-  // togglePlayback(): void {
-  //   if (this.gpxPlayer) {
-  //     this.gpxPlayer.toggle();
-  //   }
-  // }
-
-
-
   togglePlayback(): void {
     if (this.gpxPlayer) {
       this.gpxPlayer.toggle();
       this.isPlaying = this.gpxPlayer.isPlaying;
     }
   }
-
-
 
   private assignSlopeColors(coords: [number, number, number][]): void {
     for (let i = 1; i < coords.length; i++) {
@@ -592,6 +558,4 @@ export class GpxMap implements AfterViewInit, OnInit {
     this.playbackSpeed = speed;
     this.gpxPlayer?.setSpeed(speed);
   }
-
-
 }
