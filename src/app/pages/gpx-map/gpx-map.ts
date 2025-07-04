@@ -29,7 +29,7 @@ import FeatureFormat from 'ol/format/Feature';
   standalone: true,
   imports: [
     CommonModule,
-    ],
+  ],
 })
 
 export class GpxMap implements AfterViewInit, OnInit {
@@ -116,6 +116,24 @@ export class GpxMap implements AfterViewInit, OnInit {
   private fullCoords: [number, number, number][] = [];
   legendExpanded = true;
 
+  // Añadido para manejar el cambio de capa base
+  // Declaro una variable para guardar el extent inicial
+  // Esto es útil si quieres volver a este extent después de cambiar la capa base
+  // Puedes usarlo para ajustar la vista del mapa al cargar un track
+  // Esto es opcional, pero puede ser útil si quieres mantener la vista del mapa consistente
+  // Puedes eliminarlo si no lo necesitas
+  private initialExtent: [number, number, number, number] | null = null;
+
+  // Añadido para el botón de resetear vista
+  private resetControl!: ResetViewControl;
+
+  // Añadido para guardar el centro y zoom iniciales
+  private initialCenter: [number, number] | null = null;
+  private initialZoom: number | null = null;
+
+
+
+
   toggleLegend(): void {
     this.legendExpanded = !this.legendExpanded;
   }
@@ -171,6 +189,100 @@ export class GpxMap implements AfterViewInit, OnInit {
     },
   });
 
+  // Método para evaluar si el botón de resetear vista debe mostrarse
+  // Este método se llama cada vez que cambia el centro o la resolución del mapa
+  // Puedes ajustar la tolerancia según tus necesidades
+  // Aquí se compara el extent actual del mapa con el extent inicial
+  // Si son diferentes, se muestra el botón; si son iguales, se oculta
+  // Esto permite que el botón de resetear vista aparezca solo cuando el usuario ha movido o hecho zoom en el mapa
+  // Puedes ajustar la tolerancia según tus necesidades
+  //   private evaluateResetVisibility() {
+  //     if (!this.initialExtent) return;
+
+  //     const currentExtent = this.map.getView().calculateExtent(this.map.getSize());
+
+  //     const tolerance = 1; // px de tolerancia en coordenadas
+  //     const hasChanged = !this.extentsAreEqual(this.initialExtent, currentExtent, tolerance);
+  // console.log('hasChanged:', hasChanged, '→', hasChanged ? 'show' : 'hide');
+
+  //     if (hasChanged) {
+  //       this.resetControl.show();
+  //     } else {
+  //       this.resetControl.hide();
+  //     }
+  //   }
+
+  //   private extentsAreEqual(ext1: number[], ext2: number[], tolerance = 1): boolean {
+  //     for (let i = 0; i < 4; i++) {
+  //       if (Math.abs(ext1[i] - ext2[i]) > tolerance) return false;
+  //     }
+  //     return true;
+  //   }
+
+
+  // Método para evaluar si el botón de resetear vista debe mostrarse
+  // Corregido para no depender del Extent, sino del centro y zoom
+  // private evaluateResetVisibility() {
+  //   if (!this.initialExtent) return;
+
+  //   const view = this.map.getView();
+  //   // const currentCenter = view.getCenter();
+  //   // ...existing code...
+  //   const currentCenterRaw = view.getCenter();
+  //   const currentCenter: [number, number] | null =
+  //     Array.isArray(currentCenterRaw) && currentCenterRaw.length === 2
+  //       ? [currentCenterRaw[0], currentCenterRaw[1]]
+  //       : null;
+
+  //   const centerChanged = !this.coordsAreClose(currentCenter, this.initialCenter, 1); // tolerancia 1px
+  //   // ...existing code...
+
+
+  //   const currentZoom = view.getZoom();
+
+  //   // Guardamos los valores iniciales la primera vez que se hace fit
+  //   if (!this.initialCenter || !this.initialZoom) return;
+
+  //   // const centerChanged = !this.coordsAreClose(currentCenter, this.initialCenter, 1); // tolerancia 1px
+  //   const zoomChanged = Math.abs(currentZoom! - this.initialZoom) > 0.01;
+
+  //   const hasChanged = centerChanged || zoomChanged;
+
+  //   console.log('centerChanged:', centerChanged, 'zoomChanged:', zoomChanged, 'haschanged:', hasChanged);
+
+  //   if (hasChanged) {
+  //     this.resetControl.show();
+  //   } else {
+  //     this.resetControl.hide();
+  //   }
+  // }
+  private evaluateResetVisibility() {
+    const view = this.map.getView();
+    const currentCenter = view.getCenter();
+    const currentZoom = view.getZoom();
+
+    // 👇 Asegurarse de que iniciales están definidos
+    if (!this.initialCenter || !this.initialZoom || !currentCenter || currentZoom === undefined) {
+      return; // aún no podemos comparar
+    }
+
+    const centerChanged = !this.coordsAreClose(
+      Array.isArray(currentCenter) && currentCenter.length === 2 ? [currentCenter[0], currentCenter[1]] : null,
+      this.initialCenter,10 ); // tolerancia 10px
+    const zoomChanged = Math.abs(currentZoom - this.initialZoom) > 0.05; // tolerancia 0.05
+
+    const hasChanged = centerChanged || zoomChanged;
+
+    //console.log('centerChanged:', centerChanged, 'zoomChanged:', zoomChanged, '→ hasChanged:', hasChanged);
+      console.log(`📐 Cambios detectados — center: ${centerChanged}, zoom: ${zoomChanged}`);
+
+
+    if (hasChanged) {
+      this.resetControl.show();
+    } else {
+      this.resetControl.hide();
+    }
+  }
 
   ngAfterViewInit(): void {
     const popupContainer = document.getElementById('popup')!;
@@ -221,6 +333,33 @@ export class GpxMap implements AfterViewInit, OnInit {
     this.map.addControl(new FullScreen({
       className: 'ol-full-screen-custom'
     }));
+
+    // this.map.addControl(new ResetViewControl(() => {
+    //   if (this.initialExtent) {
+    //     this.map.getView().fit(this.initialExtent, { padding: [40, 40, 40, 40], duration: 500 });
+    //   }
+    // }));
+
+    // Añadido para el botón de resetear vista
+    // Este botón se mostrará solo si hay un extent inicial
+    // y se ocultará después de hacer clic en él para resetear la vista
+    // Puedes cambiar el icono o el texto del botón según tus preferencias
+    // Puedes usar un icono de FontAwesome o cualquier otro icono que prefieras
+    // Aquí he usado un emoji de flecha circular, pero puedes cambiarlo por cualquier otro
+    // Puedes usar un icono SVG o una imagen si lo prefieres
+    this.resetControl = new ResetViewControl(() => {
+      if (this.initialCenter && this.initialZoom !== null) {
+        this.map.getView().setCenter(this.initialCenter);
+        this.map.getView().setZoom(this.initialZoom);
+        this.resetControl.hide();
+      }
+    });
+    this.map.addControl(this.resetControl);
+    this.map.getView().on('change:center', () => this.evaluateResetVisibility());
+    this.map.getView().on('change:resolution', () => this.evaluateResetVisibility());
+
+
+
 
     this.markerInfoContent = document.getElementById('marker-info-content')!;
 
@@ -419,8 +558,35 @@ export class GpxMap implements AfterViewInit, OnInit {
 
         if (coordinates.length > 0) {
           const extent = this.source.getExtent();
-          if (extent && extent[0] !== Infinity) {
+          if (extent && extent.length === 4 && Infinity) {
+            this.initialExtent = [extent[0], extent[1], extent[2], extent[3]]; // 👈 Guardamos la vista inicial
             this.map.getView().fit(extent, { padding: [40, 40, 40, 40], duration: 800 });
+
+            // Evaluar si el botón de resetear vista debe mostrarse
+            // Justo después de hacer fit:
+            // setTimeout(() => {
+            //   const view = this.map.getView();
+            //   const center = view.getCenter();
+            //   if (Array.isArray(center) && center.length === 2) {
+            //     this.initialCenter = [center[0], center[1]];
+            //   } else {
+            //     this.initialCenter = null;
+            //   }
+            //   this.initialZoom = view.getZoom() ?? null;
+            // }, 900);
+
+            setTimeout(() => {
+              const view = this.map.getView();
+              const center = view.getCenter();
+              this.initialCenter = (Array.isArray(center) && center.length === 2)
+                ? [center[0], center[1]]
+                : null;
+              this.initialZoom = view.getZoom() ?? null;
+              console.log('✅ Vista inicial guardada:', this.initialCenter, this.initialZoom);
+              this.evaluateResetVisibility(); // 👈 evalúa una vez después de inicializar
+            }, 900); // espera que se complete el fit
+
+
           }
         }
 
@@ -558,4 +724,70 @@ export class GpxMap implements AfterViewInit, OnInit {
     this.playbackSpeed = speed;
     this.gpxPlayer?.setSpeed(speed);
   }
+
+  // // Método para comparar coordenadas con una tolerancia
+  private coordsAreClose(c1: [number, number] | null, c2: [number, number] | null, tolerance: number): boolean {
+    if (!c1 || !c2) return false;
+    return (
+      Math.abs(c1[0] - c2[0]) < tolerance &&
+      Math.abs(c1[1] - c2[1]) < tolerance
+    );
+  }
+  // private coordsAreClose(c1: [number, number], c2: [number, number], tolerance: number): boolean {
+  // return (
+  //   Math.abs(c1[0] - c2[0]) < tolerance &&
+  //   Math.abs(c1[1] - c2[1]) < tolerance
+  // );
 }
+
+
+
+
+// Clase para el botón de resetear vista
+// class ResetViewControl extends Control {
+//   constructor(callback: () => void) {
+//     const button = document.createElement('button');
+//     button.innerHTML = '🔄'; // Puedes usar un icono o una imagen
+//     button.title = 'Resetear vista';
+
+//     const element = document.createElement('div');
+//     element.className = 'ol-unselectable ol-control reset-view-control';
+//     element.appendChild(button);
+
+//     super({ element });
+
+//     button.addEventListener('click', callback);
+//   }
+// }
+
+class ResetViewControl extends Control {
+  private button: HTMLButtonElement;
+  public elementDiv: HTMLDivElement;
+
+  constructor(callback: () => void) {
+    const button = document.createElement('button');
+    button.innerHTML = '🔄';
+    button.title = 'Resetear vista';
+
+    const element = document.createElement('div');
+    element.className = 'ol-unselectable ol-control reset-view-control hidden';
+    element.appendChild(button);
+
+    super({ element });
+    this.button = button;
+    this.elementDiv = element;
+
+    button.addEventListener('click', callback);
+  }
+
+  show() {
+    console.log('🟢 mostrando botón');
+    this.elementDiv.classList.remove('hidden');
+  }
+
+  hide() {
+    console.log('🔴 ocultando botón');
+    this.elementDiv.classList.add('hidden');
+  }
+}
+
