@@ -765,9 +765,10 @@ class ResetViewControl extends Control {
   public elementDiv: HTMLDivElement;
 
   constructor(callback: () => void) {
-    const button = document.createElement('button');
+    let button = document.createElement('button');
     button.innerHTML = '🔄';
     button.title = 'Resetear vista';
+    button.style.display = 'none';
 
     const element = document.createElement('div');
     element.className = 'ol-unselectable ol-control reset-view-control hidden';
@@ -782,12 +783,12 @@ class ResetViewControl extends Control {
 
   show() {
     console.log('🟢 mostrando botón');
-    this.elementDiv.classList.remove('hidden');
+    this.button.style.display = 'block';
   }
 
   hide() {
     console.log('🔴 ocultando botón');
-    this.elementDiv.classList.add('hidden');
+    this.button.style.display = 'none';;
   }
 }
 
