@@ -25,12 +25,12 @@ export class ResetViewControl extends Control {
     }
 
     show() {
-        console.log('🟢 mostrando botón');
+        //console.log('🟢 mostrando botón');
         this.button.style.display = 'block';
     }
 
     hide() {
-        console.log('🔴 ocultando botón');
+        //console.log('🔴 ocultando botón');
         this.button.style.display = 'none';
     }
 }
@@ -69,7 +69,7 @@ export function evaluateResetVisibility(
 
     const hasChanged = centerChanged || zoomChanged;
 
-    console.log(`📐 Cambios detectados — center: ${centerChanged}, zoom: ${zoomChanged}`);
+   // console.log(`📐 Cambios detectados — center: ${centerChanged}, zoom: ${zoomChanged}`);
 
     if (hasChanged) {
         resetControl.show();

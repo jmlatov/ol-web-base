@@ -248,11 +248,11 @@ export class GpxMap implements AfterViewInit, OnInit {
     // this.map.getView().on('change:center', () => this.evaluateResetVisibility());
     // this.map.getView().on('change:resolution', () => this.evaluateResetVisibility());
     this.map.getView().on('change:center', () =>
-  evaluateResetVisibility(this.map, this.resetControl, this.initialCenter, this.initialZoom, this.coordsAreClose.bind(this))
-);
-this.map.getView().on('change:resolution', () =>
-  evaluateResetVisibility(this.map, this.resetControl, this.initialCenter, this.initialZoom, this.coordsAreClose.bind(this))
-);
+      evaluateResetVisibility(this.map, this.resetControl, this.initialCenter, this.initialZoom, this.coordsAreClose.bind(this))
+    );
+    this.map.getView().on('change:resolution', () =>
+      evaluateResetVisibility(this.map, this.resetControl, this.initialCenter, this.initialZoom, this.coordsAreClose.bind(this))
+    );
 
 
     this.markerInfoContent = document.getElementById('marker-info-content')!;
@@ -300,6 +300,23 @@ this.map.getView().on('change:resolution', () =>
 
       const coordinate = evt.coordinate;
       const closest = this.fullLineString.getClosestPoint(coordinate);
+
+      // Calcula la distancia entre el cursor y el punto más cercano del track
+      const distanceToTrack = Math.hypot(
+        coordinate[0] - closest[0],
+        coordinate[1] - closest[1]
+      );
+
+      // Define un umbral en unidades de mapa (por ejemplo, metros si usas proyección geográfica)
+      const threshold = 50; // ajusta este valor según la escala de tu mapa (puede ser 10–50)
+
+      // Si está lejos del track, ocultar la info
+      if (distanceToTrack > threshold) {
+        this.markerOverlay.setPosition(undefined);
+        this.markerInfoContent.innerHTML = '';
+        return;
+      }
+
 
       // Encontrar el tramo más cercano
       let iClosest = -1;
