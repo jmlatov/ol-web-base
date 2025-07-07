@@ -19,8 +19,7 @@ import Feature from 'ol/Feature';
 import Chart from 'chart.js/auto';
 import { drawElevationChart, updateChartHighlight } from '../../utils/elevation-chart';
 import { GpxPlayer } from '../../utils/gpx-play';
-import { from } from 'rxjs';
-import FeatureFormat from 'ol/format/Feature';
+import { ResetViewControl, evaluateResetVisibility } from '../../utils/reset-view-control';
 
 @Component({
   selector: 'app-gpx-map',
@@ -79,13 +78,9 @@ export class GpxMap implements AfterViewInit, OnInit {
 
   private lastChartIndex = -1;
 
-
   private map!: OlMap;
   private source = new VectorSource();
   private waypointData: Map<string, { name: string; desc?: string; image?: string; info?: string; type?: string }> = new Map();
-
-  //private elevationChart!: Chart;
-
   private elevationChart: Chart | null = null;
   private markerFeature = new Feature(new Point([0, 0]));
 
@@ -131,9 +126,6 @@ export class GpxMap implements AfterViewInit, OnInit {
   private initialCenter: [number, number] | null = null;
   private initialZoom: number | null = null;
 
-
-
-
   toggleLegend(): void {
     this.legendExpanded = !this.legendExpanded;
   }
@@ -167,7 +159,6 @@ export class GpxMap implements AfterViewInit, OnInit {
         const featureType = feature.get('type'); // <<==== este es el tipo que cargaste del GPX
         let iconPath = 'assets/icons/default.svg'; // por defecto
 
-
         if (featureType === 'monument') {
           iconPath = 'assets/icons/monument.svg';
         } else if (featureType === 'water') {
@@ -184,105 +175,9 @@ export class GpxMap implements AfterViewInit, OnInit {
           }),
         });
       }
-
       return undefined;
     },
   });
-
-  // Método para evaluar si el botón de resetear vista debe mostrarse
-  // Este método se llama cada vez que cambia el centro o la resolución del mapa
-  // Puedes ajustar la tolerancia según tus necesidades
-  // Aquí se compara el extent actual del mapa con el extent inicial
-  // Si son diferentes, se muestra el botón; si son iguales, se oculta
-  // Esto permite que el botón de resetear vista aparezca solo cuando el usuario ha movido o hecho zoom en el mapa
-  // Puedes ajustar la tolerancia según tus necesidades
-  //   private evaluateResetVisibility() {
-  //     if (!this.initialExtent) return;
-
-  //     const currentExtent = this.map.getView().calculateExtent(this.map.getSize());
-
-  //     const tolerance = 1; // px de tolerancia en coordenadas
-  //     const hasChanged = !this.extentsAreEqual(this.initialExtent, currentExtent, tolerance);
-  // console.log('hasChanged:', hasChanged, '→', hasChanged ? 'show' : 'hide');
-
-  //     if (hasChanged) {
-  //       this.resetControl.show();
-  //     } else {
-  //       this.resetControl.hide();
-  //     }
-  //   }
-
-  //   private extentsAreEqual(ext1: number[], ext2: number[], tolerance = 1): boolean {
-  //     for (let i = 0; i < 4; i++) {
-  //       if (Math.abs(ext1[i] - ext2[i]) > tolerance) return false;
-  //     }
-  //     return true;
-  //   }
-
-
-  // Método para evaluar si el botón de resetear vista debe mostrarse
-  // Corregido para no depender del Extent, sino del centro y zoom
-  // private evaluateResetVisibility() {
-  //   if (!this.initialExtent) return;
-
-  //   const view = this.map.getView();
-  //   // const currentCenter = view.getCenter();
-  //   // ...existing code...
-  //   const currentCenterRaw = view.getCenter();
-  //   const currentCenter: [number, number] | null =
-  //     Array.isArray(currentCenterRaw) && currentCenterRaw.length === 2
-  //       ? [currentCenterRaw[0], currentCenterRaw[1]]
-  //       : null;
-
-  //   const centerChanged = !this.coordsAreClose(currentCenter, this.initialCenter, 1); // tolerancia 1px
-  //   // ...existing code...
-
-
-  //   const currentZoom = view.getZoom();
-
-  //   // Guardamos los valores iniciales la primera vez que se hace fit
-  //   if (!this.initialCenter || !this.initialZoom) return;
-
-  //   // const centerChanged = !this.coordsAreClose(currentCenter, this.initialCenter, 1); // tolerancia 1px
-  //   const zoomChanged = Math.abs(currentZoom! - this.initialZoom) > 0.01;
-
-  //   const hasChanged = centerChanged || zoomChanged;
-
-  //   console.log('centerChanged:', centerChanged, 'zoomChanged:', zoomChanged, 'haschanged:', hasChanged);
-
-  //   if (hasChanged) {
-  //     this.resetControl.show();
-  //   } else {
-  //     this.resetControl.hide();
-  //   }
-  // }
-  private evaluateResetVisibility() {
-    const view = this.map.getView();
-    const currentCenter = view.getCenter();
-    const currentZoom = view.getZoom();
-
-    // 👇 Asegurarse de que iniciales están definidos
-    if (!this.initialCenter || !this.initialZoom || !currentCenter || currentZoom === undefined) {
-      return; // aún no podemos comparar
-    }
-
-    const centerChanged = !this.coordsAreClose(
-      Array.isArray(currentCenter) && currentCenter.length === 2 ? [currentCenter[0], currentCenter[1]] : null,
-      this.initialCenter,10 ); // tolerancia 10px
-    const zoomChanged = Math.abs(currentZoom - this.initialZoom) > 0.05; // tolerancia 0.05
-
-    const hasChanged = centerChanged || zoomChanged;
-
-    //console.log('centerChanged:', centerChanged, 'zoomChanged:', zoomChanged, '→ hasChanged:', hasChanged);
-      console.log(`📐 Cambios detectados — center: ${centerChanged}, zoom: ${zoomChanged}`);
-
-
-    if (hasChanged) {
-      this.resetControl.show();
-    } else {
-      this.resetControl.hide();
-    }
-  }
 
   ngAfterViewInit(): void {
     const popupContainer = document.getElementById('popup')!;
@@ -316,6 +211,7 @@ export class GpxMap implements AfterViewInit, OnInit {
       target: 'legend-box',
       className: 'ol-attribution-bottom-right'
     }));
+
     // Añado este código para eliminar el botón de "Attribution" que aparece por defecto
     // Espera un poco para que se renderice el control y luego elimina el botón
     setTimeout(() => {
@@ -334,12 +230,6 @@ export class GpxMap implements AfterViewInit, OnInit {
       className: 'ol-full-screen-custom'
     }));
 
-    // this.map.addControl(new ResetViewControl(() => {
-    //   if (this.initialExtent) {
-    //     this.map.getView().fit(this.initialExtent, { padding: [40, 40, 40, 40], duration: 500 });
-    //   }
-    // }));
-
     // Añadido para el botón de resetear vista
     // Este botón se mostrará solo si hay un extent inicial
     // y se ocultará después de hacer clic en él para resetear la vista
@@ -355,10 +245,14 @@ export class GpxMap implements AfterViewInit, OnInit {
       }
     });
     this.map.addControl(this.resetControl);
-    this.map.getView().on('change:center', () => this.evaluateResetVisibility());
-    this.map.getView().on('change:resolution', () => this.evaluateResetVisibility());
-
-
+    // this.map.getView().on('change:center', () => this.evaluateResetVisibility());
+    // this.map.getView().on('change:resolution', () => this.evaluateResetVisibility());
+    this.map.getView().on('change:center', () =>
+  evaluateResetVisibility(this.map, this.resetControl, this.initialCenter, this.initialZoom, this.coordsAreClose.bind(this))
+);
+this.map.getView().on('change:resolution', () =>
+  evaluateResetVisibility(this.map, this.resetControl, this.initialCenter, this.initialZoom, this.coordsAreClose.bind(this))
+);
 
 
     this.markerInfoContent = document.getElementById('marker-info-content')!;
@@ -370,7 +264,6 @@ export class GpxMap implements AfterViewInit, OnInit {
       offset: [0, -15],
     });
     this.map.addOverlay(this.markerOverlay);
-
 
     this.map.on('click', (evt) => {
       const feature = this.map.forEachFeatureAtPixel(evt.pixel, (feat) => {
@@ -467,11 +360,11 @@ export class GpxMap implements AfterViewInit, OnInit {
 
         this.info.travelled = (travelled / 1000).toFixed(2);
         this.info.remaining = ((total - travelled) / 1000).toFixed(2);
+
         // Diagnósticando de nuevo si carga la información correctamente
         //console.log('Información del marcador:', this.info);
 
         this.updateMarkerInfoBox([closest[0], closest[1]], elev, slope, travelled / 1000, (total - travelled) / 1000);
-
       }
     });
 
@@ -492,10 +385,8 @@ export class GpxMap implements AfterViewInit, OnInit {
         this.updateMarkerInfoBox([coord[0], coord[1]], elev, slope, travelled, remaining);
       }
     });
-
     this.mapReady = true;
     this.tryLoadInitialTrack();
-
   }
 
   onTrackSelect(event: Event): void {
@@ -504,6 +395,7 @@ export class GpxMap implements AfterViewInit, OnInit {
   }
 
   private loadTrack(path: string): void {
+
     // Diganósticando el código para ver si se está llamando correctamente
     //console.log('Cargando track desde:', path);
 
@@ -529,7 +421,7 @@ export class GpxMap implements AfterViewInit, OnInit {
           const info = wpt.getElementsByTagNameNS('*', 'info')[0]?.textContent ?? '';
 
           this.waypointData.set(key, { name, type, desc, image, info });
-          console.log(`Waypoint: ${name} (${lat}, ${lon}) - Type: ${type}`);
+          //console.log(`Waypoint: ${name} (${lat}, ${lon}) - Type: ${type}`);
 
           // ➕ Añadir como Feature de tipo Point
           const coords = fromLonLat([lon, lat]);
@@ -564,17 +456,6 @@ export class GpxMap implements AfterViewInit, OnInit {
 
             // Evaluar si el botón de resetear vista debe mostrarse
             // Justo después de hacer fit:
-            // setTimeout(() => {
-            //   const view = this.map.getView();
-            //   const center = view.getCenter();
-            //   if (Array.isArray(center) && center.length === 2) {
-            //     this.initialCenter = [center[0], center[1]];
-            //   } else {
-            //     this.initialCenter = null;
-            //   }
-            //   this.initialZoom = view.getZoom() ?? null;
-            // }, 900);
-
             setTimeout(() => {
               const view = this.map.getView();
               const center = view.getCenter();
@@ -583,10 +464,8 @@ export class GpxMap implements AfterViewInit, OnInit {
                 : null;
               this.initialZoom = view.getZoom() ?? null;
               console.log('✅ Vista inicial guardada:', this.initialCenter, this.initialZoom);
-              this.evaluateResetVisibility(); // 👈 evalúa una vez después de inicializar
+              evaluateResetVisibility(this.map, this.resetControl, this.initialCenter, this.initialZoom, this.coordsAreClose.bind(this)); // 👈 evalúa una vez después de inicializar
             }, 900); // espera que se complete el fit
-
-
           }
         }
 
@@ -601,7 +480,6 @@ export class GpxMap implements AfterViewInit, OnInit {
 
           if (canvas) {
             const chartRef = { current: this.elevationChart };
-
             drawElevationChart(
               canvas,
               coordinates,
@@ -619,11 +497,8 @@ export class GpxMap implements AfterViewInit, OnInit {
               this.updateMarkerInfoBox.bind(this),
               this.elevationChart ?? undefined
             );
-
           }
         });
-
-
       });
   }
 
@@ -676,7 +551,6 @@ export class GpxMap implements AfterViewInit, OnInit {
       g = Math.round(255 * (1 - t2));
       b = 0;
     }
-
     return `rgb(${r},${g},${b})`;
   }
 
@@ -733,62 +607,4 @@ export class GpxMap implements AfterViewInit, OnInit {
       Math.abs(c1[1] - c2[1]) < tolerance
     );
   }
-  // private coordsAreClose(c1: [number, number], c2: [number, number], tolerance: number): boolean {
-  // return (
-  //   Math.abs(c1[0] - c2[0]) < tolerance &&
-  //   Math.abs(c1[1] - c2[1]) < tolerance
-  // );
 }
-
-
-
-
-// Clase para el botón de resetear vista
-// class ResetViewControl extends Control {
-//   constructor(callback: () => void) {
-//     const button = document.createElement('button');
-//     button.innerHTML = '🔄'; // Puedes usar un icono o una imagen
-//     button.title = 'Resetear vista';
-
-//     const element = document.createElement('div');
-//     element.className = 'ol-unselectable ol-control reset-view-control';
-//     element.appendChild(button);
-
-//     super({ element });
-
-//     button.addEventListener('click', callback);
-//   }
-// }
-
-class ResetViewControl extends Control {
-  private button: HTMLButtonElement;
-  public elementDiv: HTMLDivElement;
-
-  constructor(callback: () => void) {
-    let button = document.createElement('button');
-    button.innerHTML = '🔄';
-    button.title = 'Resetear vista';
-    button.style.display = 'none';
-
-    const element = document.createElement('div');
-    element.className = 'ol-unselectable ol-control reset-view-control hidden';
-    element.appendChild(button);
-
-    super({ element });
-    this.button = button;
-    this.elementDiv = element;
-
-    button.addEventListener('click', callback);
-  }
-
-  show() {
-    console.log('🟢 mostrando botón');
-    this.button.style.display = 'block';
-  }
-
-  hide() {
-    console.log('🔴 ocultando botón');
-    this.button.style.display = 'none';;
-  }
-}
-
