@@ -50,7 +50,7 @@
   min-width: 200px;
 }
 
-.ol-popup:after,
+/* .ol-popup:after, */
 .ol-popup:before {
   top: 100%;
   border: solid transparent;
@@ -190,7 +190,6 @@
   text-align: left;
 }
 
-
 .legend-content.collapsed {
   display: none;
 }
@@ -306,26 +305,6 @@
   font-size: 12px;
 }
 
-/* .playback-controls {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  z-index: 999;
-  display: flex;
-  gap: 10px;
-}
-
-.playback-controls button {
-  font-size: 20px;
-  border: none;
-  background: white;
-  border-radius: 5px;
-  width: 40px;
-  height: 40px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-  cursor: pointer;
-} */
-
 .reset-view-control {
   top: 120px; /* debajo del zoom y fullscreen */
   left: 0.5em;
@@ -345,7 +324,3 @@
 .reset-view-control button:hover {
   background-color: #eee;
 }
-
-/* .hidden {
-  display: none !important;
-} */

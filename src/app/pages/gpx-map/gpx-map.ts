@@ -480,7 +480,7 @@ export class GpxMap implements AfterViewInit, OnInit {
                 ? [center[0], center[1]]
                 : null;
               this.initialZoom = view.getZoom() ?? null;
-              console.log('✅ Vista inicial guardada:', this.initialCenter, this.initialZoom);
+              //console.log('✅ Vista inicial guardada:', this.initialCenter, this.initialZoom);
               evaluateResetVisibility(this.map, this.resetControl, this.initialCenter, this.initialZoom, this.coordsAreClose.bind(this)); // 👈 evalúa una vez después de inicializar
             }, 900); // espera que se complete el fit
           }
@@ -595,7 +595,7 @@ export class GpxMap implements AfterViewInit, OnInit {
     Altitud: <strong>${elev.toFixed(0)} m</strong><br>
     Pendiente: ${slope.toFixed(1)}%<br>
     <!-- Recorrido: ${travelled.toFixed(2)} km<br> -->
-    Restante: ${remaining.toFixed(2)} km 
+    <!-- Restante: ${remaining.toFixed(2)} km --> 
   `;
   }
 
