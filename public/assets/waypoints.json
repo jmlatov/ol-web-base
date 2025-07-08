@@ -2,8 +2,8 @@
   {
     "name": "Ayuntamiento de Fabara",
     "type": "poi",
-    "lon": 0.1672134,
-    "lat": 41.178183,
+    "lon": 0.16751680685893655,
+    "lat": 41.178066466868884,
     "desc": "Ayuntamiento de Fabara en la Plaza de España del pueblo",
     "image": "assets/images/mirador.jpg",
     "info": "Edificio administrativo"
@@ -20,8 +20,8 @@
   {
     "name": "Iglesia San Juan Bautista",
     "type": "historic",
-    "lon": 0.1672134,
-    "lat": 41.178183,
+    "lon": 0.16691349167115557,
+    "lat": 41.17856400155952,
     "desc": "Iglesia Románico-Gótica del Siglo XII-XIII",
     "image": "assets/images/mirador.jpg",
     "info": "Iglesia en honor de San Juan Bautista, construida sobre el antiguo castillo del pueblo"
