@@ -65,6 +65,7 @@ export class GpxMap implements AfterViewInit, OnInit {
 
   // Cargar waypoints fijos desde un archivo JSON
   private loadFixedWaypoints(): void {
+    this.fixedWaypointSource.clear(); // Opcional si recargas
     this.http.get<any[]>('assets/waypoints.json').subscribe({
       next: (waypoints) => {
         waypoints.forEach((wp) => {
@@ -72,7 +73,6 @@ export class GpxMap implements AfterViewInit, OnInit {
           const point = new Point(coords);
           const feature = new Feature(point);
 
-          // Guarda los datos para popup
           const key = `${wp.lat.toFixed(6)},${wp.lon.toFixed(6)}`;
           this.waypointData.set(key, {
             name: wp.name,
@@ -84,7 +84,7 @@ export class GpxMap implements AfterViewInit, OnInit {
 
           feature.set('name', wp.name);
           feature.set('type', wp.type);
-          this.source.addFeature(feature);
+          this.fixedWaypointSource.addFeature(feature);
         });
       },
       error: (err) => {
@@ -110,6 +110,11 @@ export class GpxMap implements AfterViewInit, OnInit {
   private lastChartIndex = -1;
 
   private map!: OlMap;
+
+  //Añado este VectorSource para manejar los waypoints fijos
+  private fixedWaypointSource = new VectorSource();
+
+  //Añado este VectorSource para manejar los tracks y sus waypoints
   private source = new VectorSource();
   private waypointData: Map<string, { name: string; desc?: string; image?: string; info?: string; type?: string }> = new Map();
   private elevationChart: Chart | null = null;
@@ -161,6 +166,28 @@ export class GpxMap implements AfterViewInit, OnInit {
     this.legendExpanded = !this.legendExpanded;
   }
 
+  // Creo la capa separada para los waypoints fijos
+  private fixedWaypointLayer = new VectorLayer({
+    source: this.fixedWaypointSource,
+    style: (feature) => {
+      const type = feature.get('type');
+      let iconPath = 'assets/icons/default.svg';
+
+      if (type === 'monument') iconPath = 'assets/icons/monument.svg';
+      else if (type === 'viewpoint') iconPath = 'assets/icons/camera.svg';
+      else if (type === 'water') iconPath = 'assets/icons/water.svg';
+
+      return new Style({
+        image: new Icon({
+          src: iconPath,
+          scale: 0.5,
+          anchor: [1, 1],
+        }),
+      });
+    }
+  });
+
+  // Creo la capa vectorial para los tracks y sus waypoints
   private vectorLayer = new VectorLayer({
     source: this.source,
     style: (feature) => {
@@ -228,7 +255,11 @@ export class GpxMap implements AfterViewInit, OnInit {
     this.map = new OlMap({
       target: 'map',
       //layers: [new TileLayer({ source: new OSM() }), this.vectorLayer],
-      layers: [this.osmLayer, this.satelliteLayer, this.vectorLayer],
+      layers: [
+        this.osmLayer,
+        this.satelliteLayer,
+        this.fixedWaypointLayer, // 👈 Añádelo antes que vectorLayer
+        this.vectorLayer],
       overlays: [overlay],
       view: new View({
         center: fromLonLat([0, 0]),

@@ -26,4 +26,13 @@
     "image": "assets/images/mirador.jpg",
     "info": "Iglesia en honor de San Juan Bautista, construida sobre el antiguo castillo del pueblo"
   }
+  {
+    "name": "Roquizal del Rullo",
+    "type": "historic",
+    "lon": 0.207926,
+    "lat": 41.155978,
+    "desc": "Poblado íbero de la edad del Bronze",
+    "image": "assets/images/ceramicas-rullo.jpg",
+    "info": "Lugar a visitar con mucha historia. Pendiente de su recuperación actualmente."
+  }
 ]
