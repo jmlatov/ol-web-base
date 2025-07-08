@@ -3,7 +3,7 @@
     "name": "Ayuntamiento de Fabara",
     "type": "poi",
     "lon": 0.1672134,
-    "lat": 41.178183
+    "lat": 41.178183,
     "desc": "Ayuntamiento de Fabara en la Plaza de España del pueblo",
     "image": "assets/images/mirador.jpg",
     "info": "Edificio administrativo"
@@ -12,7 +12,7 @@
     "name": "Mausoleo Romano",
     "type": "monument",
     "lon": 0.1561881,
-    "lat": 41.1848952
+    "lat": 41.1848952,
     "desc": "Monumento Romano del Siglo II",
     "image": "assets/images/mirador.jpg",
     "info": "Monumento funerario histórico del s.II donde reposaron los restos de Aemili Lupi"
@@ -21,7 +21,7 @@
     "name": "Iglesia San Juan Bautista",
     "type": "historic",
     "lon": 0.1672134,
-    "lat": 41.178183
+    "lat": 41.178183,
     "desc": "Iglesia Románico-Gótica del Siglo XII-XIII",
     "image": "assets/images/mirador.jpg",
     "info": "Iglesia en honor de San Juan Bautista, construida sobre el antiguo castillo del pueblo"

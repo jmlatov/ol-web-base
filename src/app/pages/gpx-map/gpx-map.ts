@@ -446,6 +446,9 @@ export class GpxMap implements AfterViewInit, OnInit {
   onTrackSelect(event: Event): void {
     const path = (event.target as HTMLSelectElement).value;
     this.loadTrack(path);
+
+        // Cargar waypoints fijos desde un archivo JSON
+    this.loadFixedWaypoints();
   }
 
   private loadTrack(path: string): void {
