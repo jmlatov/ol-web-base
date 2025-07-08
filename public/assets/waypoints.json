@@ -25,10 +25,10 @@
     "desc": "Iglesia Románico-Gótica del Siglo XII-XIII",
     "image": "assets/images/mirador.jpg",
     "info": "Iglesia en honor de San Juan Bautista, construida sobre el antiguo castillo del pueblo"
-  }
+  },
   {
     "name": "Roquizal del Rullo",
-    "type": "historic",
+    "type": "monument",
     "lon": 0.207926,
     "lat": 41.155978,
     "desc": "Poblado íbero de la edad del Bronze",

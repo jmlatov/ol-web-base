@@ -53,7 +53,7 @@ export class GpxMap implements AfterViewInit, OnInit {
       next: (tracks) => {
         this.gpxTracks = tracks;
         if (tracks.length > 0) {
-          this.initialTrackPath = tracks[0].path;
+          this.initialTrackPath = tracks[1].path;
           this.tryLoadInitialTrack();
         }
       },
@@ -181,7 +181,7 @@ export class GpxMap implements AfterViewInit, OnInit {
         image: new Icon({
           src: iconPath,
           scale: 0.5,
-          anchor: [1, 1],
+          anchor: [0.5, 0.5],
         }),
       });
     }
@@ -217,12 +217,14 @@ export class GpxMap implements AfterViewInit, OnInit {
         const featureType = feature.get('type'); // <<==== este es el tipo que cargaste del GPX
         let iconPath = 'assets/icons/default.svg'; // por defecto
 
-        if (featureType === 'monument') {
-          iconPath = 'assets/icons/monument.svg';
+        if (featureType === 'start') {
+          iconPath = 'assets/icons/start.svg';
         } else if (featureType === 'water') {
           iconPath = 'assets/icons/water.svg';
-        } else if (featureType === 'poi') {
-          iconPath = 'assets/icons/camera.svg';
+        } else if (featureType === 'finish') {
+          iconPath = 'assets/icons/finish.svg';
+        } else if (featureType === 'peak') {
+          iconPath = 'assets/icons/peak.svg';
         }
 
         return new Style({
