@@ -136,11 +136,11 @@
   min-width: 200px;
 }
 
-.ol-content div{
+/* .ol-content div{
 font-style: italic;
   font-size: 12px;
   color: #555;
-}
+} */
 
 
 #popup img {
@@ -345,10 +345,19 @@ font-style: italic;
 
 
 /* ========================
-   10. BADGES Y ELEMENTOS EXTRA
+   10. REGLAS DE OVERRIDE/RESET
    ======================== */
 
-.badge {
+#legend-box button,
+#legend button {
+  display: none !important;
+}
+
+/* ========================
+   11. BADGES Y ELEMENTOS EXTRA
+   ======================== */
+
+/* .badge {
   display: inline-block;
   background: #0066cc;
   color: white;
@@ -356,14 +365,6 @@ font-style: italic;
   border-radius: 4px;
   font-size: 12px;
   margin-top: 5px;
-}
+} */
 
 
-/* ========================
-   11. REGLAS DE OVERRIDE/RESET
-   ======================== */
-
-#legend-box button,
-#legend button {
-  display: none !important;
-}
