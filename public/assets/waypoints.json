@@ -11,8 +11,8 @@
   {
     "name": "Mausoleo Romano",
     "type": "monument",
-    "lon": 0.1561881,
-    "lat": 41.1848952,
+    "lon": 0.160370,
+    "lat": 41.184642,
     "desc": "Monumento Romano del Siglo II",
     "image": "assets/images/mirador.jpg",
     "info": "Monumento funerario histórico del s.II donde reposaron los restos de Aemili Lupi"

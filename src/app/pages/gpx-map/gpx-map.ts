@@ -53,7 +53,7 @@ export class GpxMap implements AfterViewInit, OnInit {
       next: (tracks) => {
         this.gpxTracks = tracks;
         if (tracks.length > 0) {
-          this.initialTrackPath = tracks[1].path;
+          this.initialTrackPath = tracks[0].path;
           this.tryLoadInitialTrack();
         }
       },
@@ -347,9 +347,9 @@ export class GpxMap implements AfterViewInit, OnInit {
           if (data) {
             popupContent.innerHTML = `
               <strong>${data.name}</strong><br>
-              ${data.desc ? `<em>${data.desc}</em><br>` : ''}
+              ${data.desc ? `<em style="font-size: 12px">${data.desc}</em><br>` : ''}
               ${data.image ? `<img src="${data.image}" style="max-width:150px; display:block; margin:5px 0;">` : ''}
-              ${data.info ? `<div>${data.info}</div>` : ''}
+              ${data.info ? `<em style="font-size: 10px">${data.info}</>` : ''}
             `;
             overlay.setPosition([x, y]);
           }
